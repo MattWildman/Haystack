@@ -18,41 +18,42 @@ public class UserJDBCTemplate implements UserDAO {
 	
 	public void setDataSource(DataSource dataSource) {}
 
-	public void create(String firstName, String lastName, String email) {
-		String SQL = "INSERT INTO users (firstname, lastname, email) VALUES (?, ?, ?)";
-		jdbcTemplateObject.update(SQL, firstName, lastName, email);
+	public void create(	String firstName, String lastName, String userName,
+						String password, String email, Character receiveEmails) {
+		String SQL = "INSERT INTO users (firstName, lastName, userName, password, email, receiveEmails) VALUES (?, ?, ?, ?, ?, ?)";
+		jdbcTemplateObject.update(SQL, firstName, lastName, userName, password, email, receiveEmails);
  	}
 
- 	public User getUser(Integer uid) {
- 		String SQL = "select * from users where uid = ?";
- 		User user = jdbcTemplateObject.queryForObject(SQL, new Object[]{uid}, new UserMapper());
+ 	public User getUser(Integer id) {
+ 		String SQL = "SELECT * FROM users WHERE id = ?";
+ 		User user = jdbcTemplateObject.queryForObject(SQL, new Object[]{id}, new UserMapper());
  		return user;
  	}
 
  	public List<User> listUsers() {
- 		String SQL = "select * from users";
+ 		String SQL = "SELECT * FROM users";
  		List <User> users = jdbcTemplateObject.query(SQL, new UserMapper());
  		return users;
  	}
 
- 	public void delete(Integer uid) {
- 		String SQL = "DELETE FROM users WHERE uid = ?";
- 		jdbcTemplateObject.update(SQL, uid);
+ 	public void delete(Integer id) {
+ 		String SQL = "DELETE FROM users WHERE id = ?";
+ 		jdbcTemplateObject.update(SQL, id);
  	}
 
-	public void updateFirstName(Integer uid, String firstName) {
-		String SQL = "update users set firstname = ? where uid = ?";
-		jdbcTemplateObject.update(SQL, firstName, uid);
+	public void updateFirstName(Integer id, String firstName) {
+		String SQL = "UPDATE users set firstName = ? WHERE id = ?";
+		jdbcTemplateObject.update(SQL, firstName, id);
 	}
 
-	public void updateLastName(Integer uid, String lastName) {
-		String SQL = "update users set lasttname = ? where uid = ?";
-		jdbcTemplateObject.update(SQL, lastName, uid);
+	public void updateLastName(Integer id, String lastName) {
+		String SQL = "UPDATE users set lasttName = ? WHERE id = ?";
+		jdbcTemplateObject.update(SQL, lastName, id);
 	}
 
-	public void updateEmail(Integer uid, String email) {
-		String SQL = "update users set email = ? where uid = ?";
-		jdbcTemplateObject.update(SQL, email, uid);
+	public void updateEmail(Integer id, String email) {
+		String SQL = "UPDATE users set email = ? WHERE id = ?";
+		jdbcTemplateObject.update(SQL, email, id);
 	}
 	
 }

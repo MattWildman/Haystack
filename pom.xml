@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.haystack</groupId>
 	<artifactId>Haystack</artifactId>
-	<name>SpringHaystack</name>
+	<name>Haystack</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>

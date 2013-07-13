@@ -8,7 +8,8 @@ public interface UserDAO {
 	
 	public void setDataSource(DataSource dataSource);
 	
-	public void create(String firstName, String lastName, String email);
+	public void create(	String firstName, String lastName, String userName,
+						String password, String email, Character receiveEmails);
 	
 	public User getUser(Integer uid);
 	

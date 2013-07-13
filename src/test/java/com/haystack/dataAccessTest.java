@@ -14,7 +14,7 @@ public class dataAccessTest {
 		this.userJDBCTemplate = new UserJDBCTemplate();
 	}
 	
-	@Test
+	/*@Test
 	public void createUsers() {
 	    userJDBCTemplate.create("Test4", "User4", "example4@example.com");
 	    userJDBCTemplate.create("Test5", "User5", "example5@example.com");
@@ -26,7 +26,7 @@ public class dataAccessTest {
 	    userJDBCTemplate.create("Test7", "User7", "example7@example.com");
 	    userJDBCTemplate.create("Test8", "User8", "example8@example.com");
 	    userJDBCTemplate.create("Test9", "User9", "example9@example.com");
-	}
+	}*/
 	
 	@Test
 	public void deleteUsers() {
