@@ -9,19 +9,19 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserJDBCTemplate implements UserDAO {
-
-	private JdbcTemplate jdbcTemplateObject;
 	
-	public UserJDBCTemplate() {		   
-		jdbcTemplateObject = new JdbcTemplate(new HaystackDataSource());
+	private DataSource dataSource = new HaystackDataSource();
+	private JdbcTemplate jdbcTemplateObject = new JdbcTemplate(this.dataSource);
+	
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+		jdbcTemplateObject = new JdbcTemplate(dataSource);
 	}
-	
-	public void setDataSource(DataSource dataSource) {}
 
-	public void create(	String firstName, String lastName, String userName,
-						String password, String email, Character receiveEmails) {
-		String SQL = "INSERT INTO users (firstName, lastName, userName, password, email, receiveEmails) VALUES (?, ?, ?, ?, ?, ?)";
-		jdbcTemplateObject.update(SQL, firstName, lastName, userName, password, email, receiveEmails);
+	public void create(	String firstName, String lastName, String username,
+						String password, String email) {
+		String SQL = "INSERT INTO users (firstName, lastName, username, password, email) VALUES (?, ?, ?, ?, ?)";
+		jdbcTemplateObject.update(SQL, firstName, lastName, username, password, email);
  	}
 
  	public User getUser(Integer id) {
@@ -47,8 +47,18 @@ public class UserJDBCTemplate implements UserDAO {
 	}
 
 	public void updateLastName(Integer id, String lastName) {
-		String SQL = "UPDATE users set lasttName = ? WHERE id = ?";
+		String SQL = "UPDATE users set lastName = ? WHERE id = ?";
 		jdbcTemplateObject.update(SQL, lastName, id);
+	}
+	
+	public void updateUsername(Integer id, String username) {
+		String SQL = "UPDATE users set username = ? WHERE id = ?";
+		jdbcTemplateObject.update(SQL, username, id);
+	}
+
+	public void updatePassword(Integer id, String password) {
+		String SQL = "UPDATE users set password = ? WHERE id = ?";
+		jdbcTemplateObject.update(SQL, password, id);
 	}
 
 	public void updateEmail(Integer id, String email) {
