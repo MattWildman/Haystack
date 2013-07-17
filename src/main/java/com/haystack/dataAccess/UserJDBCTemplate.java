@@ -23,8 +23,7 @@ public class UserJDBCTemplate implements UserDAO {
 	public void create(String username,String password, String email) {
 		String SQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 		jdbcTemplateObject.update(SQL, username, password, email);
-		SQL = "INSERT INTO authorities (username) VALUES (?)";
-		jdbcTemplateObject.update(SQL, username);
+		//MySQL trigger then addes new username to authorites table
  	}
 
  	public User getUser(Integer id) {
