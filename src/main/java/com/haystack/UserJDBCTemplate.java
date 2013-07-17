@@ -18,10 +18,11 @@ public class UserJDBCTemplate implements UserDAO {
 		jdbcTemplateObject = new JdbcTemplate(dataSource);
 	}
 
-	public void create(	String firstName, String lastName, String username,
-						String password, String email) {
-		String SQL = "INSERT INTO users (firstName, lastName, username, password, email) VALUES (?, ?, ?, ?, ?)";
-		jdbcTemplateObject.update(SQL, firstName, lastName, username, password, email);
+	public void create(String username,String password, String email) {
+		String SQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+		jdbcTemplateObject.update(SQL, username, password, email);
+		SQL = "INSERT INTO authorities (username) VALUES (?)";
+		jdbcTemplateObject.update(SQL, username);
  	}
 
  	public User getUser(Integer id) {
@@ -41,16 +42,6 @@ public class UserJDBCTemplate implements UserDAO {
  		jdbcTemplateObject.update(SQL, id);
  	}
 
-	public void updateFirstName(Integer id, String firstName) {
-		String SQL = "UPDATE users set firstName = ? WHERE id = ?";
-		jdbcTemplateObject.update(SQL, firstName, id);
-	}
-
-	public void updateLastName(Integer id, String lastName) {
-		String SQL = "UPDATE users set lastName = ? WHERE id = ?";
-		jdbcTemplateObject.update(SQL, lastName, id);
-	}
-	
 	public void updateUsername(Integer id, String username) {
 		String SQL = "UPDATE users set username = ? WHERE id = ?";
 		jdbcTemplateObject.update(SQL, username, id);
@@ -64,6 +55,11 @@ public class UserJDBCTemplate implements UserDAO {
 	public void updateEmail(Integer id, String email) {
 		String SQL = "UPDATE users set email = ? WHERE id = ?";
 		jdbcTemplateObject.update(SQL, email, id);
+	}
+	
+	public void updateEnabled(Integer id, Integer enabled) {
+		String SQL = "UPDATE users set enabled = ? WHERE id = ?";
+		jdbcTemplateObject.update(SQL, enabled, id);
 	}
 	
 }
