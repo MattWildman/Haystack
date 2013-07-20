@@ -21,9 +21,39 @@ public class GeneralNavigation {
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/post", method=RequestMethod.GET)
-	public ModelAndView postPage() {
+	@RequestMapping(value="/findSomeone", method=RequestMethod.GET)
+	public ModelAndView findSomeonePage() {
+		return new ModelAndView("meeting-form");
+	}
+	
+	@RequestMapping(value="/findItem", method=RequestMethod.GET)
+	public ModelAndView findItemPage() {
+		return new ModelAndView("item-form");
+	}
+	
+	@RequestMapping(value="/searches", method=RequestMethod.GET)
+	public ModelAndView searchesPage() {
+		return new ModelAndView("searches");
+	}
+	
+	@RequestMapping(value="/searches/post", method=RequestMethod.GET)
+	public ModelAndView postsPage() {
 		return new ModelAndView("post");
+	}
+	
+	@RequestMapping(value="/account", method=RequestMethod.GET)
+	public ModelAndView accountPage() {
+		return new ModelAndView("account");
+	}
+	
+	@RequestMapping(value="/inbox", method=RequestMethod.GET)
+	public ModelAndView inboxPage() {
+		return new ModelAndView("inbox");
+	}
+	
+	@RequestMapping(value="/inbox/message", method=RequestMethod.GET)
+	public ModelAndView messagePage() {
+		return new ModelAndView("message");
 	}
 
 }

@@ -9,39 +9,44 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.haystack.dataAccess.UserJDBCTemplate;
 import com.haystack.entities.Registration;
+import com.haystack.entities.User;
 import com.haystack.validation.RegistrationValidation;
 
 @Controller
 @RequestMapping("/register")
 public class RegistrationController {
-        @Autowired
-        private RegistrationValidation registrationValidation;
+        
+	@Autowired
+    private RegistrationValidation registrationValidation;
 
-        public void setRegistrationValidation(RegistrationValidation registrationValidation) {
-                this.registrationValidation = registrationValidation;
-        }
+    public void setRegistrationValidation(RegistrationValidation registrationValidation) {
+            this.registrationValidation = registrationValidation;
+    }
 
-        // Display the form on the get request
-        @RequestMapping(method = RequestMethod.GET)
-        public String showRegistration(Map<String, Registration> model) {
-                Registration registration = new Registration();
-                model.put("registration", registration);
-                return "register";
-        }
+    // Display the form on the get request
+    @RequestMapping(method = RequestMethod.GET)
+    public String showRegistration(Map<String, Registration> model) {
+            Registration registration = new Registration();
+            model.put("registration", registration);
+            return "register";
+    }
 
-        // Process the form.
-        @RequestMapping(method = RequestMethod.POST)
-        public String processRegistration(Registration registration,
-                        BindingResult result) {
-                // set custom Validation by user
-                registrationValidation.validate(registration, result);
-                if (result.hasErrors()) {
-                        return "register";
-                }
-                UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
-                userJDBCTemplate.create(registration.getUsername(),
-                						registration.getPassword(),
-                						registration.getEmail());
-                return "registration-success";
-        }
+    // Process the form.
+    @RequestMapping(method = RequestMethod.POST)
+    public String processRegistration(Registration registration,
+                    BindingResult result) {
+            // set custom Validation by user
+            registrationValidation.validate(registration, result);
+            if (result.hasErrors()) {
+                    return "register";
+            }
+            User user = new User();
+            user.setUsername(registration.getUsername());
+            user.setPassword(registration.getPassword());
+            user.setEmail(registration.getEmail()); 
+            UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
+            userJDBCTemplate.create(user, 1);
+            return "registration-success";
+    }
+        
 }

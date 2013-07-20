@@ -1,66 +1,47 @@
 package com.haystack.dataAccess;
 
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.haystack.entities.User;
 
 @Repository
-public class UserJDBCTemplate implements UserDAO {
+public class UserJDBCTemplate extends HaystackDAO<User> {
 	
-	private DataSource dataSource = new HaystackDataSource();
-	private JdbcTemplate jdbcTemplateObject = new JdbcTemplate(this.dataSource);
-	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		jdbcTemplateObject = new JdbcTemplate(dataSource);
+	public UserJDBCTemplate() {
+		this.setTableName("users");
+		this.setRowMapper(new UserMapper());
 	}
 
-	public void create(String username,String password, String email) {
-		String SQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-		jdbcTemplateObject.update(SQL, username, password, email);
-		//MySQL trigger then addes new username to authorites table
- 	}
-
- 	public User getUser(Integer id) {
- 		String SQL = "SELECT * FROM users WHERE id = ?";
- 		User user = jdbcTemplateObject.queryForObject(SQL, new Object[]{id}, new UserMapper());
- 		return user;
- 	}
-
- 	public List<User> listUsers() {
- 		String SQL = "SELECT * FROM users";
- 		List <User> users = jdbcTemplateObject.query(SQL, new UserMapper());
- 		return users;
- 	}
-
- 	public void delete(Integer id) {
- 		String SQL = "DELETE FROM users WHERE id = ?";
- 		jdbcTemplateObject.update(SQL, id);
- 	}
-
 	public void updateUsername(Integer id, String username) {
-		String SQL = "UPDATE users set username = ? WHERE id = ?";
-		jdbcTemplateObject.update(SQL, username, id);
+		this.update(id, "username", username);
 	}
 
 	public void updatePassword(Integer id, String password) {
-		String SQL = "UPDATE users set password = ? WHERE id = ?";
-		jdbcTemplateObject.update(SQL, password, id);
+		this.update(id, "password", password);
+
 	}
 
 	public void updateEmail(Integer id, String email) {
-		String SQL = "UPDATE users set email = ? WHERE id = ?";
-		jdbcTemplateObject.update(SQL, email, id);
+		this.update(id, "email", email);
+
 	}
 	
 	public void updateEnabled(Integer id, Integer enabled) {
-		String SQL = "UPDATE users set enabled = ? WHERE id = ?";
-		jdbcTemplateObject.update(SQL, enabled, id);
+		enabled = enabled >= 1 ? 1 : 0;
+		this.update(id, "enabled", enabled);
 	}
+
+	@Override
+	public void create(User user, Integer ownerId) {
+		String SQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+		this.jdbcTemplateObject.update(SQL, user.getUsername(), user.getPassword(), user.getEmail());
+		//MySQL trigger then adds new username to authorites table
+	}
+	
+	public void create(String username, String password, String email) {
+		String SQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+		this.jdbcTemplateObject.update(SQL, username, password, email);
+		//MySQL trigger then adds new username to authorites table
+ 	}
 	
 }
