@@ -26,7 +26,7 @@ public class GeneralNavigation {
 		return new ModelAndView("meeting-form");
 	}
 	
-	@RequestMapping(value="/findItem", method=RequestMethod.GET)
+	@RequestMapping(value="/findSomething", method=RequestMethod.GET)
 	public ModelAndView findItemPage() {
 		return new ModelAndView("item-form");
 	}
@@ -36,7 +36,7 @@ public class GeneralNavigation {
 		return new ModelAndView("searches");
 	}
 	
-	@RequestMapping(value="/searches/post", method=RequestMethod.GET)
+	@RequestMapping(value="/searches/post*", method=RequestMethod.GET)
 	public ModelAndView postsPage() {
 		return new ModelAndView("post");
 	}
@@ -51,7 +51,7 @@ public class GeneralNavigation {
 		return new ModelAndView("inbox");
 	}
 	
-	@RequestMapping(value="/inbox/message", method=RequestMethod.GET)
+	@RequestMapping(value="/inbox/message*", method=RequestMethod.GET)
 	public ModelAndView messagePage() {
 		return new ModelAndView("message");
 	}

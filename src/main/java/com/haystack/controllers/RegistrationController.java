@@ -23,7 +23,6 @@ public class RegistrationController {
             this.registrationValidation = registrationValidation;
     }
 
-    // Display the form on the get request
     @RequestMapping(method = RequestMethod.GET)
     public String showRegistration(Map<String, Registration> model) {
             Registration registration = new Registration();
@@ -31,11 +30,9 @@ public class RegistrationController {
             return "register";
     }
 
-    // Process the form.
     @RequestMapping(method = RequestMethod.POST)
     public String processRegistration(Registration registration,
                     BindingResult result) {
-            // set custom Validation by user
             registrationValidation.validate(registration, result);
             if (result.hasErrors()) {
                     return "register";
