@@ -6,7 +6,7 @@ import com.haystack.entities.Journey;
 
 @Repository
 public class JourneyJDBCTemplate extends HaystackDAO<Journey> {
-
+	
 	public JourneyJDBCTemplate() {
 		this.setTableName("journeys");
 		this.setRowMapper(new JourneyMapper());
@@ -24,11 +24,9 @@ public class JourneyJDBCTemplate extends HaystackDAO<Journey> {
 		this.update(id, "service", service);
 	}
 	
-	//TODO update start and end locations
-	
 	@Override
-	public void create(Journey j, Integer ctxId) {
-		String SQL = "INSERT INTO contexts (ctxId, startId, endId, type, company, service, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	public void save(Journey j, Integer ctxId) {
+		String SQL = "INSERT INTO " + this.getTableName() + " (ctxId, startId, endId, type, company, service, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		this.jdbcTemplateObject.update(SQL, ctxId, j.getStart().getId(), j.getStart().getId(), 
 									   j.getType(), j.getCompany(), j.getService(), j.getSummary());
 	}

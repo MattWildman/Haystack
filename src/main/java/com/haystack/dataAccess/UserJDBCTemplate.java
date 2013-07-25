@@ -32,8 +32,8 @@ public class UserJDBCTemplate extends HaystackDAO<User> {
 	}
 
 	@Override
-	public void create(User user, Integer ownerId) {
-		String SQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+	public void save(User user, Integer ownerId) {
+		String SQL = "INSERT INTO " + this.getTableName() + " (username, password, email) VALUES (?, ?, ?)";
 		this.jdbcTemplateObject.update(SQL, user.getUsername(), user.getPassword(), user.getEmail());
 		//MySQL trigger then adds new username to authorites table
 	}

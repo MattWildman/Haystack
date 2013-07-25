@@ -9,10 +9,6 @@ public class Connection extends HaystackEntity {
 	
 	private List<Context> contexts;
 	
-	public Connection() {
-		super();
-	}
-
 	public String getConType() {
 		return conType;
 	}

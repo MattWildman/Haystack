@@ -28,8 +28,8 @@ public class ContextJDBCTemplate extends HaystackDAO<Context> {
 	}
 	
 	@Override
-	public void create(Context cx, Integer conId) {
-		String SQL = "INSERT INTO contexts (conId, title, summary, earliest, latest, locationType) VALUES (?, ?, ?, ?, ?, ?)";
+	public void save(Context cx, Integer conId) {
+		String SQL = "INSERT INTO " + this.getTableName() + " (conId, title, summary, earliest, latest, locationType) VALUES (?, ?, ?, ?, ?, ?)";
 		this.jdbcTemplateObject.update(SQL, conId, cx.getTitle(), cx.getSummary(), 
 									   cx.getEarliest(), cx.getLatest(), cx.getLocationType());
 	}

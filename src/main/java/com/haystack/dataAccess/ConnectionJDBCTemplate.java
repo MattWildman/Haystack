@@ -28,8 +28,8 @@ public class ConnectionJDBCTemplate extends HaystackDAO<Connection> {
 	}
 	
 	@Override
-	public void create(Connection c, Integer userId) {
-		String SQL = "INSERT INTO connections (userId, title, summary, conType, status) VALUES (?, ?, ?, ?, ?)";
+	public void save(Connection c, Integer userId) {
+		String SQL = "INSERT INTO " + this.getTableName() + " (userId, title, summary, conType, status) VALUES (?, ?, ?, ?, ?)";
 		this.jdbcTemplateObject.update(SQL, userId, c.getTitle(), c.getSummary(), c.getConType(), c.getStatus());
 	}
 	

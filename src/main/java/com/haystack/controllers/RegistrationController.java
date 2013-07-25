@@ -45,7 +45,7 @@ public class RegistrationController {
             user.setPassword(registration.getPassword());
             user.setEmail(registration.getEmail()); 
             UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
-            userJDBCTemplate.create(user, 1);
+            userJDBCTemplate.save(user, 1);
             return "registration-success";
     }
         

@@ -41,7 +41,7 @@ public abstract class HaystackDAO<T> {
 		this.rowMapper = rowMapper;
 	}
 	
-	public abstract void create(T o, Integer ownerId);
+	public abstract void save(T o, Integer ownerId);
 	
 	public List<T> listAll() {
 		String SQL = "SELECT * FROM " + this.getTableName();
@@ -52,6 +52,12 @@ public abstract class HaystackDAO<T> {
 	public List<T> getByOwnerId(String ownerIdCol, Integer ownerId) {
 		String SQL = "SELECT * FROM " + this.getTableName() + " WHERE " + ownerIdCol + " = ?";
  		List <T> results = jdbcTemplateObject.query(SQL, new Object[]{ownerId}, this.getRowMapper());
+ 		return results;
+	}
+	
+	public List<T> getByValue(String valueCol, Object value) {
+		String SQL = "SELECT * FROM " + this.getTableName() + " WHERE " + valueCol + " = ?";
+ 		List <T> results = jdbcTemplateObject.query(SQL, new Object[]{value}, this.getRowMapper());
  		return results;
 	}
 	
