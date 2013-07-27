@@ -3,6 +3,7 @@ package com.haystack.dataAccess;
 import java.sql.Date;
 import java.util.List;
 
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.haystack.entities.Context;
@@ -29,9 +30,18 @@ public class ContextJDBCTemplate extends HaystackDAO<Context> {
 	
 	@Override
 	public void save(Context cx, Integer conId) {
-		String SQL = "INSERT INTO " + this.getTableName() + " (conId, title, summary, earliest, latest, locationType) VALUES (?, ?, ?, ?, ?, ?)";
-		this.jdbcTemplateObject.update(SQL, conId, cx.getTitle(), cx.getSummary(), 
-									   cx.getEarliest(), cx.getLatest(), cx.getLocationType());
+		String SQL = "INSERT INTO " + this.getTableName() + " (conId, earliest, latest, locationType) VALUES (?, ?, ?, ?)";
+		this.jdbcTemplateObject.update(SQL, conId, cx.getEarliest(), cx.getLatest(), cx.getLocationType());
+	}
+
+	public Integer saveAndReturnKey(Context cx, Integer conId) {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("conId", conId);
+		parameters.addValue("earliest", cx.getEarliest());
+		parameters.addValue("latest", cx.getLatest());
+		parameters.addValue("locationType", cx.getLocationType());
+		Number longKey = this.jdbcInsert.executeAndReturnKey(parameters);
+		return longKey.intValue();
 	}
 	
 }

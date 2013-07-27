@@ -1,6 +1,6 @@
 package com.haystack.entities;
 
-public class Location extends HaystackEntity implements Where {
+public class Location extends HaystackEntity {
 	
 	private String area;
 	private String postcode;

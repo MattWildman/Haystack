@@ -1,5 +1,6 @@
 package com.haystack.dataAccess;
 
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.haystack.entities.User;
@@ -38,10 +39,21 @@ public class UserJDBCTemplate extends HaystackDAO<User> {
 		//MySQL trigger then adds new username to authorites table
 	}
 	
-	public void create(String username, String password, String email) {
+	public void save(String username, String password, String email) {
 		String SQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 		this.jdbcTemplateObject.update(SQL, username, password, email);
 		//MySQL trigger then adds new username to authorites table
+ 	}
+	
+	public Integer saveAndReturnKey(User user, Integer ownerId) {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("username", user.getUsername());
+		parameters.addValue("password", user.getPassword());
+		parameters.addValue("email", user.getEmail());
+		parameters.addValue("enabled", 1);
+		Number longKey = this.jdbcInsert.executeAndReturnKey(parameters);
+		//MySQL trigger then adds new username to authorites table
+		return longKey.intValue();
  	}
 	
 }

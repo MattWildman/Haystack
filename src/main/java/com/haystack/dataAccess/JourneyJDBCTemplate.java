@@ -26,9 +26,8 @@ public class JourneyJDBCTemplate extends HaystackDAO<Journey> {
 	
 	@Override
 	public void save(Journey j, Integer ctxId) {
-		String SQL = "INSERT INTO " + this.getTableName() + " (ctxId, startId, endId, type, company, service, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		this.jdbcTemplateObject.update(SQL, ctxId, j.getStart().getId(), j.getStart().getId(), 
-									   j.getType(), j.getCompany(), j.getService(), j.getSummary());
+		String SQL = "INSERT INTO " + this.getTableName() + " (ctxId, type, company, service, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		this.jdbcTemplateObject.update(SQL, ctxId, j.getType(), j.getCompany(), j.getService(), j.getSummary());
 	}
 	
 }

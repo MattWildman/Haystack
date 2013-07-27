@@ -2,7 +2,7 @@ package com.haystack.entities;
 
 import lombok.Data;
 
-@Data public class Journey extends HaystackEntity implements Where {
+@Data public class Journey extends HaystackEntity {
 
 	private String type;
 	private String company;

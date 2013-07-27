@@ -22,7 +22,15 @@ public class RegistrationValidation {
 		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username",
 				"NotEmpty.registration.username",
-				"User name must not be blank.");
+				"User name is required.");
+		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password",
+				"NotEmpty.registration.password",
+				"Password is required.");
+		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword",
+				"NotEmpty.registration.confirmPassword",
+				"Please confirm your password.");
 		
 		String username = registration.getUsername();
 		

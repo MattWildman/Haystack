@@ -7,6 +7,10 @@ public class Meeting extends Connection {
 	private Participant user;
 	private List<Participant> participants;
 	
+	public Meeting() {
+		this.setConType("meeting");
+	}
+	
 	public Participant getUser() {
 		return user;
 	}

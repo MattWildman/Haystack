@@ -6,16 +6,20 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public abstract class HaystackDAO<T> {
 
 	private String tableName;
+	private String keyColumnName = "id";
 	private RowMapper<T> rowMapper;
 	
 	protected DataSource dataSource = new HaystackDataSource();
 	protected JdbcTemplate jdbcTemplateObject = new JdbcTemplate(this.getDataSource());
+	protected SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplateObject)
+											.usingGeneratedKeyColumns(this.getKeyColumnName());
 	
 	protected String getTableName() {
 		return tableName;
@@ -23,6 +27,15 @@ public abstract class HaystackDAO<T> {
 
 	protected void setTableName(String tableName) {
 		this.tableName = tableName;
+		this.jdbcInsert.setTableName(tableName);
+	}
+
+	protected String getKeyColumnName() {
+		return keyColumnName;
+	}
+
+	protected void setKeyColumnName(String keyColumnName) {
+		this.keyColumnName = keyColumnName;
 	}
 
 	protected DataSource getDataSource() {

@@ -6,7 +6,7 @@
 <title>Find someone</title>
 </head>
 <body>
-	<form:form method="Post" action="findSomeone" commandName="meetingSearch">
+	<form:form method="Post" action="findSomeone" commandName="meeting">
 	
 		<h1>Find someone</h1>
 		Title: <form:input path="title" /><span class="error"><form:errors path="title" /></span><br>
@@ -23,53 +23,53 @@
 		</form:select><br>
 		
 		<h3>The place</h3>
-		Name: <form:input path="location.title" /><span class="error"><form:errors path="location.title" /></span><br>
-		Area: <form:input path="location.area" /><span class="error"><form:errors path="location.area" /></span><br>
-		Postcode: <form:input path="location.postcode" /><span class="error"><form:errors path="location.postcode" /></span><br>
-		Country: <form:input path="location.country" /><span class="error"><form:errors path="location.country" /></span><br>
-		Latitude: <form:input path="location.lat" /><span class="error"><form:errors path="location.lat" /></span><br>
-		Longitude: <form:input path="location.longd" /><span class="error"><form:errors path="location.longd" /></span><br>
-		Radius: <form:input path="location.rad" /><span class="error"><form:errors path="location.rad" /></span><br>
+		Name: <form:input path="contexts[0].location.title" /><span class="error"><form:errors path="contexts[0].location.title" /></span><br>
+		Area: <form:input path="contexts[0].location.area" /><span class="error"><form:errors path="contexts[0].location.area" /></span><br>
+		Postcode: <form:input path="contexts[0].location.postcode" /><span class="error"><form:errors path="contexts[0].location.postcode" /></span><br>
+		Country: <form:input path="contexts[0].location.country" /><span class="error"><form:errors path="contexts[0].location.country" /></span><br>
+		Latitude: <form:input path="contexts[0].location.lat" /><span class="error"><form:errors path="contexts[0].location.lat" /></span><br>
+		Longitude: <form:input path="contexts[0].location.longd" /><span class="error"><form:errors path="contexts[0].location.longd" /></span><br>
+		Radius: <form:input path="contexts[0].location.rad" /><span class="error"><form:errors path="contexts[0].location.rad" /></span><br>
 		
 		<h3>The journey</h3>
-		Type of transport: <form:input path="journey.type" />
-		<span class="error"><form:errors path="journey.type" /></span><br>
-		Transport company: <form:input path="journey.company" />
-		<span class="error"><form:errors path="journey.company" /></span><br>
-		Particular service: <form:input path="journey.service" />
-		<span class="error"><form:errors path="journey.service" /></span><br>
+		Type of transport: <form:input path="contexts[0].journey.type" />
+		<span class="error"><form:errors path="contexts[0].journey.type" /></span><br>
+		Transport company: <form:input path="contexts[0].journey.company" />
+		<span class="error"><form:errors path="contexts[0].journey.company" /></span><br>
+		Particular service: <form:input path="contexts[0].journey.service" />
+		<span class="error"><form:errors path="contexts[0].journey.service" /></span><br>
 
 		<h4>Where on the journey did you first meet?</h4>
-		Name: <form:input path="journey.start.title" />
-		<span class="error"><form:errors path="journey.start.title" /></span><br>
-		Area: <form:input path="journey.start.area" />
-		<span class="error"><form:errors path="journey.start.area" /></span><br>
-		Postcode: <form:input path="journey.start.postcode" />
-		<span class="error"><form:errors path="journey.start.postcode" /></span><br>
-		Country: <form:input path="journey.start.country" />
-		<span class="error"><form:errors path="journey.start.country" /></span><br>
-		Latitude: <form:input path="journey.start.lat" />
-		<span class="error"><form:errors path="journey.start.lat" /></span><br>
-		Longitude: <form:input path="journey.start.longd" />
-		<span class="error"><form:errors path="journey.start.longd" /></span><br>
-		Radius: <form:input path="journey.start.rad" />
-		<span class="error"><form:errors path="journey.start.rad" /></span><br>
+		Name: <form:input path="contexts[0].journey.start.title" />
+		<span class="error"><form:errors path="contexts[0].journey.start.title" /></span><br>
+		Area: <form:input path="contexts[0].journey.start.area" />
+		<span class="error"><form:errors path="contexts[0].journey.start.area" /></span><br>
+		Postcode: <form:input path="contexts[0].journey.start.postcode" />
+		<span class="error"><form:errors path="contexts[0].journey.start.postcode" /></span><br>
+		Country: <form:input path="contexts[0].journey.start.country" />
+		<span class="error"><form:errors path="contexts[0].journey.start.country" /></span><br>
+		Latitude: <form:input path="contexts[0].journey.start.lat" />
+		<span class="error"><form:errors path="contexts[0].journey.start.lat" /></span><br>
+		Longitude: <form:input path="contexts[0].journey.start.longd" />
+		<span class="error"><form:errors path="contexts[0].journey.start.longd" /></span><br>
+		Radius: <form:input path="contexts[0].journey.start.rad" />
+		<span class="error"><form:errors path="contexts[0].journey.start.rad" /></span><br>
 		
 		<h4>Where was the last place on the journey that you were together?</h4>
-		Name: <form:input path="journey.end.title" />
-		<span class="error"><form:errors path="journey.end.title" /></span><br>
-		Area: <form:input path="journey.end.area" />
-		<span class="error"><form:errors path="journey.end.area" /></span><br>
-		Postcode: <form:input path="journey.end.postcode" />
-		<span class="error"><form:errors path="journey.end.postcode" /></span><br>
-		Country: <form:input path="journey.end.country" />
-		<span class="error"><form:errors path="journey.end.country" /></span><br>
-		Latitude: <form:input path="journey.end.lat" />
-		<span class="error"><form:errors path="journey.end.lat" /></span><br>
-		Longitude: <form:input path="journey.end.longd" />
-		<span class="error"><form:errors path="journey.end.longd" /></span><br>
-		Radius: <form:input path="journey.end.rad" />
-		<span class="error"><form:errors path="journey.end.rad" /></span><br>
+		Name: <form:input path="contexts[0].journey.end.title" />
+		<span class="error"><form:errors path="contexts[0].journey.end.title" /></span><br>
+		Area: <form:input path="contexts[0].journey.end.area" />
+		<span class="error"><form:errors path="contexts[0].journey.end.area" /></span><br>
+		Postcode: <form:input path="contexts[0].journey.end.postcode" />
+		<span class="error"><form:errors path="contexts[0].journey.end.postcode" /></span><br>
+		Country: <form:input path="contexts[0].journey.end.country" />
+		<span class="error"><form:errors path="contexts[0].journey.end.country" /></span><br>
+		Latitude: <form:input path="contexts[0].journey.end.lat" />
+		<span class="error"><form:errors path="contexts[0].journey.end.lat" /></span><br>
+		Longitude: <form:input path="contexts[0].journey.end.longd" />
+		<span class="error"><form:errors path="contexts[0].journey.end.longd" /></span><br>
+		Radius: <form:input path="contexts[0].journey.end.rad" />
+		<span class="error"><form:errors path="contexts[0].journey.end.rad" /></span><br>
 		
 		<h2>About you</h2>
 		Name: 	<form:input path="user.name"/>

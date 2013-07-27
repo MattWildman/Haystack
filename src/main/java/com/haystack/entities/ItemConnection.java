@@ -6,6 +6,10 @@ public class ItemConnection extends Connection {
 	
 	private List<Item> items;
 
+	public ItemConnection() {
+		this.setConType("item");
+	}
+	
 	public List<Item> getItems() {
 		return items;
 	}

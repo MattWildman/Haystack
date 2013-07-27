@@ -2,15 +2,13 @@ package com.haystack.entities;
 
 import java.sql.Date;
 
-import lombok.Data;
-
-@Data public class Context extends HaystackEntity{
+public class Context extends HaystackEntity{
 	
 	private Date earliest;
 	private Date latest;
 	private String locationType;
-	
-	private Where where;
+	private Location location;
+	private Journey journey;
 
 	public Date getEarliest() {
 		return earliest;
@@ -36,12 +34,20 @@ import lombok.Data;
 		this.locationType = locationType;
 	}
 
-	public Where getWhere() {
-		return where;
+	public Location getLocation() {
+		return location;
 	}
 
-	public void setWhere(Where where) {
-		this.where = where;
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public Journey getJourney() {
+		return journey;
+	}
+
+	public void setJourney(Journey journey) {
+		this.journey = journey;
 	}
 	
 }
