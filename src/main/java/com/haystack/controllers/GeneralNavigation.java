@@ -21,11 +21,6 @@ public class GeneralNavigation {
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/findSomeone", method=RequestMethod.GET)
-	public ModelAndView findSomeonePage() {
-		return new ModelAndView("meeting-form");
-	}
-	
 	@RequestMapping(value="/findSomething", method=RequestMethod.GET)
 	public ModelAndView findItemPage() {
 		return new ModelAndView("item-form");

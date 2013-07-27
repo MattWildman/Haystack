@@ -6,6 +6,7 @@ import org.springframework.validation.ValidationUtils;
 
 import com.haystack.entities.Registration;
 
+
 @Component("registrationValidator")
 public class RegistrationValidation {
 	
@@ -21,20 +22,21 @@ public class RegistrationValidation {
 		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username",
 				"NotEmpty.registration.username",
-				"User Name must not be Empty.");
+				"User name must not be blank.");
 		
 		String username = registration.getUsername();
 		
 		if ((username.length()) > 50) {
 			errors.rejectValue("username",
 					"lengthOfUser.registration.username",
-					"User Name must not more than 50 characters.");
+					"User name must not more than 50 characters.");
 		}
+		
 		if (!(registration.getPassword()).equals(registration
 				.getConfirmPassword())) {
 			errors.rejectValue("password",
 					"matchingPassword.registration.password",
-					"Password and Confirm Password Not match.");
+					"Password and confirm password do not match.");
 		}
 		
 	}
