@@ -3,7 +3,6 @@ package com.haystack.entities;
 public class Participant extends HaystackEntity {
 	
 	private String gender;
-	private String name;
 	private Integer minAge;
 	private Integer maxAge;
 	private Integer height;
@@ -14,14 +13,6 @@ public class Participant extends HaystackEntity {
 	
 	public void setGender(String gender) {
 		this.gender = gender;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
 	}
 	
 	public Integer getMinAge() {

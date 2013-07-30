@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.haystack.dataAccess.ConnectionJDBCTemplate;
 import com.haystack.dataAccess.ContextJDBCTemplate;
+import com.haystack.dataAccess.JourneyJDBCTemplate;
 import com.haystack.dataAccess.LocationJDBCTemplate;
 import com.haystack.dataAccess.MeetingJDBCTemplate;
+import com.haystack.dataAccess.ParticipantJDBCTemplate;
 import com.haystack.entities.Connection;
 import com.haystack.entities.Context;
 import com.haystack.entities.Journey;
@@ -61,21 +63,35 @@ public class MeetingController {
 		ContextJDBCTemplate contextJDBCTemplate = new ContextJDBCTemplate();
 		MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
 		LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
+		ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
 
 		connection.setStatus("unresolved");
 		
-		Integer conId = connectionJDBCTemplate.saveAndReturnKey(connection, 1);
+		Integer conId = connectionJDBCTemplate.saveAndReturnKey(connection, 1); //TODO get actual user id from session
 		Integer ctxId = contextJDBCTemplate.saveAndReturnKey(context, conId);
 		Integer meetingId = meetingJDBCTemplate.saveAndReturnKey(meeting, conId);
 		
 		if (context.getLocationType().equals("location")) {
 			Location location  = context.getLocation();
-			locationJDBCTemplate.save(location, ctxId);
+			locationJDBCTemplate.saveAndReturnKey(location, ctxId);
 		}
 		else {
 			Journey journey = context.getJourney();
-			//TODO finish this!
+			JourneyJDBCTemplate journeyJDBCTemplate = new JourneyJDBCTemplate();
+			Integer journeyId = journeyJDBCTemplate.saveAndReturnKey(journey, ctxId);
+			Location start = journey.getStart();
+			Location end = journey.getEnd();
+			Integer startId = locationJDBCTemplate.saveAndReturnKey(start, ctxId);
+			Integer endId = locationJDBCTemplate.saveAndReturnKey(end, ctxId);
+			journeyJDBCTemplate.updateStartId(journeyId, startId);
+			journeyJDBCTemplate.updateEndId(journeyId, endId);
+			locationJDBCTemplate.updateJourneyId(startId, journeyId);
+			locationJDBCTemplate.updateJourneyId(endId, journeyId);
 		}
+		
+		Integer userId = participantJDCBTemplate.saveAndReturnKey(user, meetingId);
+		participantJDCBTemplate.save(other, meetingId);
+		meetingJDBCTemplate.updateUserId(meetingId, userId);
 		
 	}
 

@@ -1,5 +1,6 @@
 package com.haystack.dataAccess;
 
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.haystack.entities.Location;
@@ -36,12 +37,31 @@ public class LocationJDBCTemplate extends HaystackDAO<Location> {
 		this.update(id, "rad", rad);
 	}
 	
+	public void updateJourneyId(Integer id, Integer journeyId) {
+		this.update(id, "journeyId", journeyId);
+	}
+	
 	@Override
 	public void save(Location l, Integer ctxId) {
 		String SQL = "INSERT INTO " + this.getTableName() + " (ctxId, name, area, postcode, country, description, lat, longd, rad)" +
 					 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		this.jdbcTemplateObject.update(SQL, ctxId, l.getTitle(), l.getArea(), l.getPostcode(), l.getCountry(), 
 									   l.getSummary(), l.getLat(), l.getLongd(), l.getRad());
+	}
+	
+	public Integer saveAndReturnKey(Location l, Integer ctxId) {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("ctxId", ctxId);
+		parameters.addValue("name", l.getTitle());
+		parameters.addValue("area", l.getArea());
+		parameters.addValue("postcode", l.getPostcode());
+		parameters.addValue("country", l.getCountry());
+		parameters.addValue("description", l.getSummary());
+		parameters.addValue("lat", l.getLat());
+		parameters.addValue("longd", l.getLongd());
+		parameters.addValue("rad", l.getRad());
+		Number longKey = this.jdbcInsert.executeAndReturnKey(parameters);
+		return longKey.intValue();
 	}
 	
 }

@@ -6,7 +6,7 @@
 <title>Find someone</title>
 </head>
 <body>
-	<form:form method="Post" action="findSomeone" commandName="meeting">
+	<form:form method="Post" action="FindSomeone" commandName="meeting">
 	
 		<h1>Find someone</h1>
 		Title: <form:input path="title" /><span class="error"><form:errors path="title" /></span><br>
@@ -72,8 +72,8 @@
 		<span class="error"><form:errors path="contexts[0].journey.end.rad" /></span><br>
 		
 		<h2>About you</h2>
-		Name: 	<form:input path="user.name"/>
-				<span class="error"><form:errors path="user.name" /></span><br>
+		Name: 	<form:input path="user.title"/>
+				<span class="error"><form:errors path="user.title" /></span><br>
 		Gender:<br>
 		<form:select path="user.gender">
 			<form:option value="female">Female</form:option>
@@ -85,10 +85,12 @@
 					 <span class="error"><form:errors path="user.maxAge" /></span><br>
 		Height: <form:input path="user.height" />
 					 <span class="error"><form:errors path="user.height" /></span><br>
+		Description: <form:textarea path="user.summary" />
+					 <span class="error"><form:errors path="user.summary" /></span><br>
 					 
 		<h2>About them</h2>
-		Name: 	<form:input path="participants[0].name"/>
-				<span class="error"><form:errors path="participants[0].name" /></span><br>
+		Name: 	<form:input path="participants[0].title"/>
+				<span class="error"><form:errors path="participants[0].title" /></span><br>
 		Gender:<br>
 		<form:select path="participants[0].gender">
 			<form:option value="female">Female</form:option>
@@ -99,7 +101,9 @@
 		Maximum age: <form:input path="participants[0].maxAge" />
 					 <span class="error"><form:errors path="participants[0].maxAge" /></span><br>
 		Height: <form:input path="participants[0].height" />
-					 <span class="error"><form:errors path="participants[0].height" /></span><br>
+				<span class="error"><form:errors path="participants[0].height" /></span><br>
+		Description: <form:textarea path="participants[0].summary" />
+					 <span class="error"><form:errors path="participants[0].summary" /></span><br>
 					 
 		<input type="submit" value="Submit" />
 					 

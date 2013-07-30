@@ -13,6 +13,10 @@ public class MeetingJDBCTemplate extends HaystackDAO<Meeting> {
 		this.setRowMapper(new MeetingMapper());
 	}
 	
+	public void updateUserId(Integer id, Integer userId) {
+		this.update(id, "userDesc", userId);
+	}
+	
 	@Override
 	public void save(Meeting m, Integer conId) {
 		String SQL = "INSERT INTO " + this.getTableName() + " (conId, userDesc) " +
