@@ -3,6 +3,8 @@ package com.haystack.controllers;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -15,6 +17,7 @@ import com.haystack.dataAccess.JourneyJDBCTemplate;
 import com.haystack.dataAccess.LocationJDBCTemplate;
 import com.haystack.dataAccess.MeetingJDBCTemplate;
 import com.haystack.dataAccess.ParticipantJDBCTemplate;
+import com.haystack.dataAccess.UserJDBCTemplate;
 import com.haystack.entities.Connection;
 import com.haystack.entities.Context;
 import com.haystack.entities.Journey;
@@ -64,10 +67,15 @@ public class MeetingController {
 		MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
 		LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
 		ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
+		UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
 
+		User loggedInUser = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String loggedInUsername = loggedInUser.getUsername();
+		Integer loggedInUserId = userJDBCTemplate.getByUsername(loggedInUsername).getId();
+		
 		connection.setStatus("unresolved");
 		
-		Integer conId = connectionJDBCTemplate.saveAndReturnKey(connection, 1); //TODO get actual user id from session
+		Integer conId = connectionJDBCTemplate.saveAndReturnKey(connection, loggedInUserId);
 		Integer ctxId = contextJDBCTemplate.saveAndReturnKey(context, conId);
 		Integer meetingId = meetingJDBCTemplate.saveAndReturnKey(meeting, conId);
 		

@@ -31,6 +31,18 @@ public class UserJDBCTemplate extends HaystackDAO<User> {
 		enabled = enabled >= 1 ? 1 : 0;
 		this.update(id, "enabled", enabled);
 	}
+	
+	public User getByUsername(String username) {
+		String SQL = "SELECT * FROM users WHERE username = ?";
+ 		User result = jdbcTemplateObject.queryForObject(SQL, new Object[]{username}, this.getRowMapper());
+ 		return result;
+	}
+	
+	public User getByEmail(String email) {
+		String SQL = "SELECT * FROM users WHERE username = ?";
+ 		User result = jdbcTemplateObject.queryForObject(SQL, new Object[]{email}, this.getRowMapper());
+ 		return result;
+	}
 
 	@Override
 	public void save(User user, Integer ownerId) {
