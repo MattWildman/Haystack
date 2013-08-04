@@ -1,5 +1,8 @@
 package com.haystack.controllers;
 
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +62,13 @@ public class MeetingController {
 		
 		Connection connection = meeting;
 		Context context = meeting.getContexts().get(0);
+		SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DDThh:mm:ssTZD");
+		try {
+			context.setEarliest((Date) formatter.parse(context.getEarliestString()));
+			context.setLatest((Date) formatter.parse(context.getLatestString()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		Participant user = meeting.getUser();
 		Participant other = meeting.getParticipants().get(0);
 		

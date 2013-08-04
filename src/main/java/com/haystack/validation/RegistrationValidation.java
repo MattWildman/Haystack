@@ -40,8 +40,7 @@ public class RegistrationValidation {
 					"User name must not more than 50 characters.");
 		}
 		
-		if (!(registration.getPassword()).equals(registration
-				.getConfirmPassword())) {
+		if (!(registration.getPassword()).equals(registration.getConfirmPassword())) {
 			errors.rejectValue("password",
 					"matchingPassword.registration.password",
 					"Password and confirm password do not match.");

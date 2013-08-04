@@ -4,11 +4,29 @@ import java.sql.Date;
 
 public class Context extends HaystackEntity{
 	
+	private String earliestString;
+	private String latestString;
 	private Date earliest;
 	private Date latest;
 	private String locationType;
 	private Location location;
 	private Journey journey;
+
+	public String getEarliestString() {
+		return earliestString;
+	}
+
+	public void setEarliestString(String earliestString) {
+		this.earliestString = earliestString;
+	}
+
+	public String getLatestString() {
+		return latestString;
+	}
+
+	public void setLatestString(String latestString) {
+		this.latestString = latestString;
+	}
 
 	public Date getEarliest() {
 		return earliest;

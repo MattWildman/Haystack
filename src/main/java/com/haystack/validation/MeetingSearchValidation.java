@@ -1,5 +1,7 @@
 package com.haystack.validation;
 
+import java.util.Date;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -46,7 +48,14 @@ public class MeetingSearchValidation {
 					  "Transport type is required.");		
 		}
 		
-		//TODO Finish this!
+		Date earliest = meeting.getContexts().get(0).getEarliest();
+		Date latest = meeting.getContexts().get(0).getLatest();
+		
+		/*if (latest.before(earliest)) {
+			errors.rejectValue("latest",
+					"illogicalDate.meetingSearch.latest",
+					"The later date cannot be earlier than the earlier date!");
+		}*/
 
 	}
 
