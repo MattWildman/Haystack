@@ -1,6 +1,6 @@
 package com.haystack.entities;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Context extends HaystackEntity{
 	
@@ -32,8 +32,8 @@ public class Context extends HaystackEntity{
 		return earliest;
 	}
 
-	public void setEarliest(Date earliest) {
-		this.earliest = earliest;
+	public void setEarliest(Date date) {
+		this.earliest = date;
 	}
 
 	public Date getLatest() {

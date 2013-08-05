@@ -4,61 +4,8 @@
 <html>
 <head>
 <title>Find someone</title>
-<script type="text/javascript">
-	var ed, eM, ey, eh, em;
-	var ld, lM, ly, lh, lm;
-	function setDate(s) {
-		switch (s) {
-			case "ed" :
-				ed = document.getElementById('e-day').value;
-				break;
-			case "eM" :
-				eM = document.getElementById('e-month').value;
-				break;
-			case "ey" :
-				ey = document.getElementById('e-year').value;
-				break;
-			case "eh" :
-				eh = document.getElementById('e-hour').value;
-				break;
-			case "em" :
-				em = document.getElementById('e-min').value;
-				break;
-			case "ld" :
-				ld = document.getElementById('l-day').value;
-				break;
-			case "lM" :
-				lM = document.getElementById('l-month').value;
-				break;
-			case "ly" :
-				ly = document.getElementById('l-year').value;
-				break;
-			case "lh" :
-				lh = document.getElementById('l-hour').value;
-				break;
-			case "lm" :
-				lm = document.getElementById('l-min').value;
-				break;
-			default :
-				break;
-			}
-				
-			if (document.getElementById('no-range').checked) {
-				ld = ed;
-				lM = eM;
-				ly = ey;
-			}
-			
-			var earliest = new Date(ey, eM, ed, eh, em, 0, 0);
-			var latest = new Date(ly, lM, ld, lh, lm, 0, 0);
-			
-			document.getElementById('earliest').value = earliest.toISOString();
-			document.getElementById('latest').value = latest.toISOString();
-		
-	}
-</script>
 </head>
-<body>
+<body onload="setCurrentDateTime()">
 	<form:form method="Post" action="FindSomeone" commandName="meeting">
 	
 		<h1>Find someone</h1>
@@ -70,18 +17,8 @@
 		<h2>When did you meet?</h2>
 		<input type="radio" id="no-range" name="use-range" value="no"/>I know the exact date<br>
 		<input type="radio" id="yes-range" name="use-range" value="yes"/>I don't know the exact date<br>
-		Earliest: <input name="e-day" id="e-day" size="2" onkeyup="setDate('ed')" /> 
-				  <input name="e-month" id="e-month" size="2" onkeyup="setDate('eM')" /> 
-				  <input name="e-year" id="e-year" size="4" onkeyup="setDate('ey')" />
-				  <input name="e-hour" id="e-hour" size="2" onkeyup="setDate('eh')"/>:
-				  <input name="e-min" id="e-min" size="2" onkeyup="setDate('em')"/>
-				  <span class="error"><form:errors path="contexts[0].earliest" /></span><br>
-		Earliest: <input name="l-day" id="l-day" size="2" onkeyup="setDate('ld')" /> 
-				  <input name="l-month" id="l-month" size="2" onkeyup="setDate('lM')" /> 
-				  <input name="l-year" id="l-year" size="4" onkeyup="setDate('ly')" />
-				  <input name="l-hour" id="l-hour" size="2" onkeyup="setDate('lh')"/>:
-				  <input name="l-min" id="l-min" size="2" onkeyup="setDate('lm')"/>
-				  <span class="error"><form:errors path="contexts[0].latest" /></span><br>
+		Earliest date and time: <input id="edate" value="01/01/1900" /> <input id="etime" value="01:00" /><br>
+		Latest date and time: <input id="ldate" /> <input id="ltime" onkeyup="processDateInput()"/> 
 		<form:input id="earliest" type="hidden" path="contexts[0].earliestString" />
 		<form:input id="latest" type="hidden" path="contexts[0].latestString" />
 		
@@ -184,5 +121,6 @@
 		<input type="submit" value="Submit" />
 					 
 	</form:form>
+	<script src="resources/meeting-form.js"></script>
 </body>
 </html>

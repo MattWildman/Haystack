@@ -1,10 +1,10 @@
 package com.haystack.controllers;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -62,13 +62,19 @@ public class MeetingController {
 		
 		Connection connection = meeting;
 		Context context = meeting.getContexts().get(0);
-		SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DDThh:mm:ssTZD");
-		try {
-			context.setEarliest((Date) formatter.parse(context.getEarliestString()));
-			context.setLatest((Date) formatter.parse(context.getLatestString()));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		
+		System.out.println("e string: " + context.getEarliestString());
+		System.out.println("l string: " + context.getLatestString());
+		
+		DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+		DateTime edt = format.parseDateTime(context.getEarliestString());
+		DateTime ldt = format.parseDateTime(context.getLatestString());
+		context.setEarliest(edt.toDate());
+		context.setLatest(ldt.toDate());
+		
+		System.out.println("e date: " + context.getEarliest());
+		System.out.println("l date: " + context.getLatest());
+		
 		Participant user = meeting.getUser();
 		Participant other = meeting.getParticipants().get(0);
 		

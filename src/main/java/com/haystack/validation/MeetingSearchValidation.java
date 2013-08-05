@@ -48,10 +48,10 @@ public class MeetingSearchValidation {
 					  "Transport type is required.");		
 		}
 		
-		Date earliest = meeting.getContexts().get(0).getEarliest();
+		/*Date earliest = meeting.getContexts().get(0).getEarliest();
 		Date latest = meeting.getContexts().get(0).getLatest();
 		
-		/*if (latest.before(earliest)) {
+		if (latest.before(earliest)) {
 			errors.rejectValue("latest",
 					"illogicalDate.meetingSearch.latest",
 					"The later date cannot be earlier than the earlier date!");
