@@ -17,8 +17,10 @@
 		<h2>When did you meet?</h2>
 		<input type="radio" id="no-range" name="use-range" value="no"/>I know the exact date<br>
 		<input type="radio" id="yes-range" name="use-range" value="yes"/>I don't know the exact date<br>
-		Earliest date and time: <input id="edate" value="01/01/1900" /> <input id="etime" value="01:00" /><br>
-		Latest date and time: <input id="ldate" /> <input id="ltime" onkeyup="processDateInput()"/> 
+		Earliest date and time: <input id="edate" value="01/01/1900" /> <input id="etime" value="01:00" />
+		<span class="error"><form:errors path="contexts[0].earliestString" /></span><br>
+		Latest date and time: <input id="ldate" /> <input id="ltime" onkeyup="processDateInput()"/>
+		<span class="error"><form:errors path="contexts[0].latestString" /></span>
 		<form:input id="earliest" type="hidden" path="contexts[0].earliestString" />
 		<form:input id="latest" type="hidden" path="contexts[0].latestString" />
 		

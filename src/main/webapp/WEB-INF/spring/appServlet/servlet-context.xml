@@ -22,10 +22,10 @@
 	</beans:bean>
 	
 	<!-- Messages -->
-	<beans:bean id="messageSource"
-	class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<beans:property name="basename" value="/WEB-INF/messages.properties" />
+	<beans:bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<beans:property name="basename" value="messages" />
 	</beans:bean>
+
 	
 	<context:component-scan base-package="com.haystack" />
 	

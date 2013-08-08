@@ -80,6 +80,12 @@ public abstract class HaystackDAO<T> {
  		return result;
 	}
 	
+	public Object getValueById(Integer id, String valueCol) {
+		String SQL = "SELECT " + valueCol + " FROM " + this.getTableName() + " WHERE id = ?";
+ 		Object result = jdbcTemplateObject.queryForObject(SQL, new Object[]{id}, this.getRowMapper());
+ 		return result;
+	}
+	
 	public void delete(Integer id) {
 		String SQL = "DELETE FROM " + this.getTableName() + " WHERE id = ?";
  		jdbcTemplateObject.update(SQL, id);

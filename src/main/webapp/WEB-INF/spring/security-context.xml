@@ -9,6 +9,8 @@
 	<http auto-config="true" use-expressions="true">
 	
 		<intercept-url pattern="/FindSomeone" access="isAuthenticated()" />
+		<intercept-url pattern="/Inbox*" access="isAuthenticated()" />
+		<intercept-url pattern="/Searches*" access="isAuthenticated()" />
 		
 		<form-login login-page="/login" 
 					default-target-url="/login-success"

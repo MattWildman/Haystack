@@ -2,31 +2,14 @@ package com.haystack.controllers;
 
 import java.util.Map;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.haystack.dataAccess.ConnectionJDBCTemplate;
-import com.haystack.dataAccess.ContextJDBCTemplate;
-import com.haystack.dataAccess.JourneyJDBCTemplate;
-import com.haystack.dataAccess.LocationJDBCTemplate;
-import com.haystack.dataAccess.MeetingJDBCTemplate;
-import com.haystack.dataAccess.ParticipantJDBCTemplate;
-import com.haystack.dataAccess.UserJDBCTemplate;
-import com.haystack.entities.Connection;
-import com.haystack.entities.Context;
-import com.haystack.entities.Journey;
-import com.haystack.entities.Location;
+import com.haystack.dataAccess.HaystackDBFacade;
 import com.haystack.entities.Meeting;
-import com.haystack.entities.Participant;
 import com.haystack.validation.MeetingSearchValidation;
 
 @Controller
@@ -53,70 +36,9 @@ public class MeetingController {
 		if (result.hasErrors()) {
 			return "meeting-form";
 		}
-		this.storeMeetingDetails(meeting);
+		HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
+		haystackDBFacade.storeMeeting(meeting);
 		return "meeting-posted";
-	}
-	
-	@Transactional
-	private void storeMeetingDetails(Meeting meeting) {
-		
-		Connection connection = meeting;
-		Context context = meeting.getContexts().get(0);
-		
-		System.out.println("e string: " + context.getEarliestString());
-		System.out.println("l string: " + context.getLatestString());
-		
-		DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
-		DateTime edt = format.parseDateTime(context.getEarliestString());
-		DateTime ldt = format.parseDateTime(context.getLatestString());
-		context.setEarliest(edt.toDate());
-		context.setLatest(ldt.toDate());
-		
-		System.out.println("e date: " + context.getEarliest());
-		System.out.println("l date: " + context.getLatest());
-		
-		Participant user = meeting.getUser();
-		Participant other = meeting.getParticipants().get(0);
-		
-		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
-		ContextJDBCTemplate contextJDBCTemplate = new ContextJDBCTemplate();
-		MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
-		LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
-		ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
-		UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
-
-		User loggedInUser = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String loggedInUsername = loggedInUser.getUsername();
-		Integer loggedInUserId = userJDBCTemplate.getByUsername(loggedInUsername).getId();
-		
-		connection.setStatus("unresolved");
-		
-		Integer conId = connectionJDBCTemplate.saveAndReturnKey(connection, loggedInUserId);
-		Integer ctxId = contextJDBCTemplate.saveAndReturnKey(context, conId);
-		Integer meetingId = meetingJDBCTemplate.saveAndReturnKey(meeting, conId);
-		
-		if (context.getLocationType().equals("location")) {
-			Location location  = context.getLocation();
-			locationJDBCTemplate.saveAndReturnKey(location, ctxId);
-		}
-		else {
-			Journey journey = context.getJourney();
-			JourneyJDBCTemplate journeyJDBCTemplate = new JourneyJDBCTemplate();
-			Integer journeyId = journeyJDBCTemplate.saveAndReturnKey(journey, ctxId);
-			Location start = journey.getStart();
-			Location end = journey.getEnd();
-			Integer startId = locationJDBCTemplate.saveAndReturnKey(start, ctxId);
-			Integer endId = locationJDBCTemplate.saveAndReturnKey(end, ctxId);
-			journeyJDBCTemplate.updateStartId(journeyId, startId);
-			journeyJDBCTemplate.updateEndId(journeyId, endId);
-			locationJDBCTemplate.updateJourneyId(startId, journeyId);
-			locationJDBCTemplate.updateJourneyId(endId, journeyId);
-		}
-		
-		Integer userId = participantJDCBTemplate.saveAndReturnKey(user, meetingId);
-		participantJDCBTemplate.save(other, meetingId);
-		meetingJDBCTemplate.updateUserId(meetingId, userId);
-		
 	}
 
 }
