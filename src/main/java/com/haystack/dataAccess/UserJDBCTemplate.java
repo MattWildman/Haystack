@@ -43,6 +43,12 @@ public class UserJDBCTemplate extends HaystackDAO<User> {
  		User result = jdbcTemplateObject.queryForObject(SQL, new Object[]{email}, this.getRowMapper());
  		return result;
 	}
+	
+	public User getByConnectionId(Integer conId) {
+		String SQL = "SELECT * FROM users WHERE id IN (SELECT c.userId FROM connections c WHERE c.id = ?)";
+		User result = jdbcTemplateObject.queryForObject(SQL, new Object[]{conId}, this.getRowMapper());
+		return result;
+	}
 
 	@Override
 	public void save(User user, Integer ownerId) {

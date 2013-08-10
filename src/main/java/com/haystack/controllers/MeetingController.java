@@ -1,12 +1,11 @@
 package com.haystack.controllers;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.haystack.dataAccess.HaystackDBFacade;
 import com.haystack.entities.Meeting;
@@ -24,21 +23,22 @@ public class MeetingController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public String findSomeonePage(Map<String, Meeting> model) {
+	public ModelAndView findSomeonePage() {
+		ModelAndView modelAndView = GeneralNavigation.renderPage("Find somone", "meeting-form");
 		Meeting meeting = new Meeting();
-		model.put("meeting", meeting);
-		return "meeting-form";
+		modelAndView.addObject("meeting", meeting);
+		return modelAndView;
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public String processMeetingSearch(Meeting meeting, BindingResult result) {
+	public ModelAndView processMeetingSearch(Meeting meeting, BindingResult result) {
 		meetingSearchValidation.validate(meeting, result);
 		if (result.hasErrors()) {
-			return "meeting-form";
+			return GeneralNavigation.renderPage("Find somone", "meeting-form");
 		}
 		HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
 		haystackDBFacade.storeMeeting(meeting);
-		return "meeting-posted";
+		return GeneralNavigation.renderPage("Meeting posted", "meeting-posted");
 	}
 
 }

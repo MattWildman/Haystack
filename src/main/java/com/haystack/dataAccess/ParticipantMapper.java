@@ -13,7 +13,7 @@ public class ParticipantMapper implements RowMapper<Participant> {
 	public Participant mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Participant participant = new Participant();
 		participant.setId(rs.getInt("id"));
-		participant.setTitle(rs.getString("title"));
+		participant.setTitle(rs.getString("name"));
 		participant.setSummary(rs.getString("description"));
 		participant.setGender(rs.getString("gender"));
 		participant.setMinAge(rs.getInt("minAge"));

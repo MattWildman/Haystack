@@ -32,9 +32,6 @@
     <servlet-name>appServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
-  <welcome-file-list>
-    <welcome-file>/WEB-INF/views/index.jsp</welcome-file>
-  </welcome-file-list>
   <!-- Error handling -->
   <error-page>
     <error-code>404</error-code>

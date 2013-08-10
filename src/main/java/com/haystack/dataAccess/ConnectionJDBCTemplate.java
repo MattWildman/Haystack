@@ -28,6 +28,12 @@ public class ConnectionJDBCTemplate extends HaystackDAO<Connection> {
 		return this.getByOwnerId("userId", userId);
 	}
 	
+	public Connection getByMeetingId(Integer meetingId) {
+		String SQL = "SELECT * FROM connections WHERE id IN (SELECT m.conId FROM meetings m WHERE m.id = ?)";
+		Connection result = jdbcTemplateObject.queryForObject(SQL, new Object[]{meetingId}, this.getRowMapper());
+		return result;
+	}
+	
 	public List<Connection> getUserMeetings(Integer userId) {
 		String SQL = "SELECT * FROM connections WHERE conType = 'meeting' AND userId = ?";
  		List <Connection> results = jdbcTemplateObject.query(SQL, new Object[]{userId}, this.getRowMapper());

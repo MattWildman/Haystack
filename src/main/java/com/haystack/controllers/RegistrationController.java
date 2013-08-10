@@ -13,7 +13,7 @@ import com.haystack.entities.User;
 import com.haystack.validation.RegistrationValidation;
 
 @Controller
-@RequestMapping("/register")
+@RequestMapping("/Register")
 public class RegistrationController {
         
 	@Autowired

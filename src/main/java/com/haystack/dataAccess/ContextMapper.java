@@ -13,8 +13,6 @@ public class ContextMapper implements RowMapper<Context> {
    public Context mapRow(ResultSet rs, int rowNum) throws SQLException {
       Context context = new Context();
       context.setId(rs.getInt("id"));
-      context.setTitle(rs.getString("title"));
-      context.setSummary(rs.getString("summary"));
       context.setEarliest(rs.getDate("earliest"));
       context.setLatest(rs.getDate("latest"));
       context.setLocationType(rs.getString("locationType"));

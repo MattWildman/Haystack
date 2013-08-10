@@ -6,16 +6,16 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 
+import com.haystack.controllers.SecurityNavigation;
 import com.haystack.entities.Connection;
 import com.haystack.entities.Context;
 import com.haystack.entities.Journey;
 import com.haystack.entities.Location;
 import com.haystack.entities.Meeting;
 import com.haystack.entities.Participant;
+import com.haystack.entities.User;
 
 @Repository
 public class HaystackDBFacade {
@@ -27,7 +27,13 @@ public class HaystackDBFacade {
 		for (Connection c : connections) {
 			meetings.add(this.buildMeeting(c));
 		}
-		return null;
+		return meetings;
+	}
+	
+	public Meeting getMeeting(Integer id) {
+		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
+		Connection connection = connectionJDBCTemplate.getByMeetingId(id);
+		return buildMeeting(connection);
 	}
 
 	private Meeting buildMeeting(Connection c) {
@@ -38,7 +44,7 @@ public class HaystackDBFacade {
 		LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
 		ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
 		MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();		
-		Meeting meeting = meetingJDBCTemplate.getByOwnerId("conID", conId).get(0);
+		Meeting meeting = meetingJDBCTemplate.getByOwnerId("conId", conId).get(0);
 		Context context = contextJDBCTemplate.getByOwnerId("conId", conId).get(0);	
 		if (context.getLocationType().equals("location")) {			
 			Location location = locationJDBCTemplate.getByOwnerId("ctxId", context.getId()).get(0);		
@@ -46,23 +52,14 @@ public class HaystackDBFacade {
 		}	
 		else {			
 			JourneyJDBCTemplate journeyJDBCTemplate = new JourneyJDBCTemplate();
-			Journey journey = context.getJourney();
-			Integer startId = (Integer) journeyJDBCTemplate.getValueById(journey.getId(), "startId");
-			Integer endId = (Integer) journeyJDBCTemplate.getValueById(journey.getId(), "endId");
-			Location start = locationJDBCTemplate.getById(startId);
-			Location end = locationJDBCTemplate.getById(endId);			
-			journey.setStart(start);
-			journey.setEnd(end);
+			Journey journey = journeyJDBCTemplate.getByOwnerId("ctxId", context.getId()).get(0);
 			context.setJourney(journey);
 		}
-		Integer userDescId = (Integer) meetingJDBCTemplate.getValueById(meeting.getId(), "userDesc");
-		Participant userDesc = participantJDCBTemplate.getById(userDescId);
-		Participant otherDesc = participantJDCBTemplate.getByOwnerId("meetingId", meeting.getId()).get(0);	
+		Participant otherDesc = participantJDCBTemplate.getByOwnerId("meetingId", meeting.getId()).get(1);	
 		meeting.setContexts(new ArrayList<Context>());
 		meeting.addContext(context);
 		meeting.setParticipants(new ArrayList<Participant>());
 		meeting.addParticipant(otherDesc);
-		meeting.setUser(userDesc);
 		meeting.setTitle(title);
 		meeting.setSummary(summary);		
 		return meeting;	
@@ -83,10 +80,7 @@ public class HaystackDBFacade {
 		MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
 		LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
 		ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
-		UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
-		User loggedInUser = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String loggedInUsername = loggedInUser.getUsername();
-		Integer loggedInUserId = userJDBCTemplate.getByUsername(loggedInUsername).getId();		
+		Integer loggedInUserId = SecurityNavigation.getLoggedInUserId();		
 		connection.setStatus("unresolved");		
 		Integer conId = connectionJDBCTemplate.saveAndReturnKey(connection, loggedInUserId);
 		Integer ctxId = contextJDBCTemplate.saveAndReturnKey(context, conId);
@@ -111,6 +105,14 @@ public class HaystackDBFacade {
 		Integer userId = participantJDCBTemplate.saveAndReturnKey(user, meetingId);
 		participantJDCBTemplate.save(other, meetingId);
 		meetingJDBCTemplate.updateUserId(meetingId, userId);
+	}
+
+	public Integer getUserId(Integer meetingId) {
+		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
+		Connection connection = connectionJDBCTemplate.getByMeetingId(meetingId);
+		UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
+		User owner = userJDBCTemplate.getByConnectionId(connection.getId());
+		return owner.getId();
 	}
 
 }

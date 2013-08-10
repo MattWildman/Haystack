@@ -15,7 +15,6 @@ public class MeetingMapper implements RowMapper<Meeting> {
 	public Meeting mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Meeting meeting = new Meeting();
 		meeting.setId(rs.getInt("id"));
-		meeting.setSummary(rs.getString("description"));
 		meeting.setUser(participantJDBCTemplate.getById(rs.getInt("userDesc")));
 		return meeting;
 	}

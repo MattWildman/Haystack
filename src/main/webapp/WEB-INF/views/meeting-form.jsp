@@ -1,12 +1,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>Find someone</title>
-</head>
-<body onload="setCurrentDateTime()">
-	<form:form method="Post" action="FindSomeone" commandName="meeting">
+	<form:form method="Post" action="FindSomeone" commandName="meeting" onload="setCurrentDateTime()">
 	
 		<h1>Find someone</h1>
 		Title: <form:input path="title" />
@@ -124,5 +118,3 @@
 					 
 	</form:form>
 	<script src="resources/meeting-form.js"></script>
-</body>
-</html>
