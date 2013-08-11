@@ -15,11 +15,6 @@
 
 (function($) {
 
-// for ie9 doesn't support debug console >>>
-if (!window.console) window.console = {};
-if (!window.console.log) window.console.log = function () { };
-// ^^^
-
 var GMapsLatLonPicker = (function() {
 
 	var _self = this;
@@ -31,7 +26,7 @@ var GMapsLatLonPicker = (function() {
 		defLng : 0,
 		defZoom : 5,
 		queryLocationNameWhenLatLngChanges: true,
-		queryElevationWhenLatLngChanges: true,
+		queryElevationWhenLatLngChanges: false,
 		mapOptions : {
 			mapTypeId: google.maps.MapTypeId.ROADMAP,
 			mapTypeControl: false,
@@ -40,12 +35,11 @@ var GMapsLatLonPicker = (function() {
 			streetViewControl: false
 		},
 		strings : {
-			markerText : "Drag this Marker", 
+			markerText : "Drag this marker", 
 			error_empty_field : "Couldn't find coordinates for this place",
 			error_no_results : "Couldn't find coordinates for this place"
 		}
 	};
-
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// VARIABLES USED BY THE FUNCTION (DON'T MODIFY THIS PART) ////////////////////////////////////
@@ -196,7 +190,7 @@ var GMapsLatLonPicker = (function() {
 				$(_self.vars.cssID).trigger("location_changed", $(_self.vars.cssID));
 			});
 
-			// Update location and zoom values based on input field's value 
+			// Update location and zoom values based on input field's value
 			$(_self.vars.cssID + ".gllpUpdateButton").bind("click", function() {
 				var lat = $(_self.vars.cssID + ".gllpLatitude").val();
 				var lng = $(_self.vars.cssID + ".gllpLongitude").val();
@@ -236,8 +230,22 @@ $(document).ready( function() {
 	});
 });
 
-$(document).bind("location_changed", function(event, object) {
-	console.log("changed: " + $(object).attr('id') );
+//re-initialises maps when revealed to prevent rendering issue
+$('#where-type').change(function() {
+	$this = $(this);
+	$locationFields = $('#location-fields');
+	$journeyFields = $('#journey-fields');
+	if ($this.val() == 'journey') {
+		$locationFields.addClass('hidden');
+		$journeyFields.removeClass('hidden');
+		(new GMapsLatLonPicker()).init($("#journey-start-map"));
+		(new GMapsLatLonPicker()).init($("#journey-end-map"));
+	}
+	else {
+		$journeyFields.addClass('hidden');
+		$locationFields.removeClass('hidden');
+		(new GMapsLatLonPicker()).init($("#location-map"));
+	}
 });
 
 }(jQuery));

@@ -22,7 +22,7 @@ public class UsersDataAccessTest {
 		user.setEmail("testkey2@testkey.com");
 	}
 	
-	/*@Test
+	@Test
 	public void createUsers() {
 	    userJDBCTemplate.save("user7", "test", "example7@example.com");
 	    userJDBCTemplate.save("user8", "test", "example8@example.com");
@@ -46,7 +46,7 @@ public class UsersDataAccessTest {
 		User matt = userJDBCTemplate.getById(1);
 		String testEmail = matt.getEmail();
 		assertEquals("Email not updated correctly", "matthewwildman@gmail.com", testEmail);
-	}*/
+	}
 	
 	@Test 
 	public void testInsert() {
