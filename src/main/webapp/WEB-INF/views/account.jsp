@@ -1,1 +1,1 @@
-<h1>Your Haystack account</h1>
+<h1>Your account</h1>

@@ -6,6 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.haystack.controllers.SecurityNavigation;
@@ -30,9 +31,12 @@ public class HaystackDBFacade {
 		return meetings;
 	}
 	
-	public Meeting getMeeting(Integer id) {
+	public Meeting getMeeting(Integer id) throws EmptyResultDataAccessException {
 		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
 		Connection connection = connectionJDBCTemplate.getByMeetingId(id);
+		if (connection == null) {
+			throw new EmptyResultDataAccessException(id);
+		}
 		return buildMeeting(connection);
 	}
 

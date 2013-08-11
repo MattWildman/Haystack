@@ -12,7 +12,6 @@ public class GeneralNavigation {
 		ModelAndView modelAndView = new ModelAndView("Haystack-template");
 		modelAndView.addObject("contentTitle", title);
 		modelAndView.addObject("contentBody", bodyTemplate + ".jsp");
-		System.out.println("Rendering " + title);
 		return modelAndView;
 	}
 	

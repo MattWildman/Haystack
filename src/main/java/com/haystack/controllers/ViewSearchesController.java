@@ -2,6 +2,7 @@ package com.haystack.controllers;
 
 import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +28,16 @@ public class ViewSearchesController {
 	
 	@RequestMapping(value="/Searches/{id}", method=RequestMethod.GET)
 	public ModelAndView showSearch(@PathVariable Integer id) {
-		Meeting meeting = haystackDBFacade.getMeeting(id);
-		Integer ownerId = haystackDBFacade.getUserId(id);
-		String meetingTitle = meeting.getTitle();
+		Meeting meeting = null;
+		Integer ownerId = 0;
+		String meetingTitle = "";
+		try {
+			meeting = haystackDBFacade.getMeeting(id);
+			ownerId = haystackDBFacade.getUserId(id);
+			meetingTitle = meeting.getTitle();
+		} catch (EmptyResultDataAccessException e) {
+			return GeneralNavigation.renderPage("Search not found", "404");
+		}
 		ModelAndView modelAndView = GeneralNavigation.renderPage(meetingTitle, "post");
 		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
 		if (ownerId != loggedInId) {

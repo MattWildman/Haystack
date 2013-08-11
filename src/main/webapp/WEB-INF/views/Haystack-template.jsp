@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
   "http://www.w3.org/TR/html4/loose.dtd">
-<c:url value="/resources/main.css" var="css" />
+<c:url value="/resources/css/main.css" var="cssURL" />
 <c:url value="/" var="homeURL" />
 <c:url value="/Login" var="logInURL" />
 <c:url value="j_spring_security_logout" var="logOutURL" />
@@ -15,7 +15,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=uTF-8">
 
 <title>Haystack - ${contentTitle}</title>
-<link rel="stylesheet" type="text/css" href="${css}" media="all">
+<link rel="stylesheet" type="text/css" href="${cssURL}" media="all">
 </head>
 
 <body>

@@ -35,12 +35,6 @@ public class MeetingSearchValidation implements Validator {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contexts[0].location.area",
 					  "NotEmpty.meetingSearch.locationArea",
 					  "Area is required.");
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contexts[0].location.lat",
-					  "NotEmpty.meetingSearch.locationLat",
-					  "Latitude is required.");
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contexts[0].location.longd",
-					  "NotEmpty.meetingSearch.locationLongd",
-					  "Longitude is required.");
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contexts[0].location.rad",
 					  "NotEmpty.meetingSearch.locationRad",
 					  "Radius is required.");

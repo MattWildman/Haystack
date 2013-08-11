@@ -1,6 +1,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-	<form:form method="Post" action="FindSomeone" commandName="meeting" onload="setCurrentDateTime()">
+	<form:form method="Post" action="FindSomeone" commandName="meeting">
 	
 		<h1>Find someone</h1>
 		Title: <form:input path="title" />
@@ -33,12 +33,24 @@
 		<span class="error"><form:errors path="contexts[0].location.postcode" /></span><br>
 		Country: <form:input path="contexts[0].location.country" />
 		<span class="error"><form:errors path="contexts[0].location.country" /></span><br>
-		Latitude: <form:input path="contexts[0].location.lat" />
+		<fieldset class="gllpLatlonPicker">
+			<input type="text" class="gllpSearchField gllpLocationName" size="65">
+			<input type="button" class="gllpSearchButton" value="search">
+			<div class="gllpMap">Google Maps</div>
+			<form:input type="hidden" path="contexts[0].location.lat" class="gllpLatitude" value="51"/>
+			<form:input type="hidden" path="contexts[0].location.longd" class="gllpLongitude" value="0"/>
+			<input type="hidden" class="gllpZoom" value="5"/>
+		</fieldset>
 		<span class="error"><form:errors path="contexts[0].location.lat" /></span><br>
-		Longitude: <form:input path="contexts[0].location.longd" />
 		<span class="error"><form:errors path="contexts[0].location.longd" /></span><br>
-		Radius: <form:input path="contexts[0].location.rad" />
-		<span class="error"><form:errors path="contexts[0].location.rad" /></span><br>
+		What radius would you like Haystack to search?<br>
+		<form:select path="contexts[0].location.rad">
+			<form:option value="10">10m - I know exactly where the meeting took place</form:option>
+			<form:option value="200">200m - search within a couple of streets</form:option>
+			<form:option value="1000">1km - a few streets or small town</form:option>
+			<form:option value="5000">5km - a large town centre</form:option>
+			<form:option value="10000">10km - search a large area!</form:option>
+		</form:select>
 		
 		<h3>The journey</h3>
 		Type of transport: <form:input path="contexts[0].journey.type" />
@@ -117,4 +129,8 @@
 		<input type="submit" value="Submit" />
 					 
 	</form:form>
-	<script src="resources/meeting-form.js"></script>
+	<script src="resources/js/meeting-form.js"></script>
+	<script src="resources/js/jquery-1.7.2.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script src="resources/js/jquery-gmaps-latlon-picker.js"></script>
+	
