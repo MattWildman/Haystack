@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-	<form:form method="Post" action="FindSomeone" commandName="meeting">
-	
+	<form:form method="Post" action="FindSomeone" commandName="meeting" onsubmit="setDateTime()">
+		
 		<h1>Find someone</h1>
 		Title: <form:input path="title" />
 		<span class="error"><form:errors path="title" /></span><br>

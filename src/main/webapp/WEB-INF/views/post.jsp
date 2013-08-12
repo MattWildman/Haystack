@@ -1,9 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <h1>${meeting.title}</h1>
 <p>${meeting.summary}</p>
-<p>Sometime between: 
-${meeting.contexts[0].earliest} and ${meeting.contexts[0].latest} 
-</p>
+<h2>When</h2>
+<p>${meeting.contexts[0].earliestString} 
+and ${meeting.contexts[0].latestString}</p> 
 <h2>Where</h2>
 <c:choose>
 	<c:when test="${meeting.contexts[0].locationType == \"location\"}">

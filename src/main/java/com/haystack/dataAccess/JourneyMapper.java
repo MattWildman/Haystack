@@ -13,9 +13,9 @@ public class JourneyMapper implements RowMapper<Journey> {
 	private LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
 	
 	private String buildTitle(Journey j) {
-		String type = j.getType();
-		String company = j.getCompany().isEmpty() ? " - " + j.getCompany() : "";
-		String service = j.getService().isEmpty() ? " - " + j.getService() : "";
+		String type = j.getType() + " journey";
+		String company = j.getCompany().isEmpty() ? "" : " - " + j.getCompany();
+		String service = j.getService().isEmpty() ? "" : " - " + j.getService();
 		return type + company + service;
 	}
 	
@@ -26,7 +26,7 @@ public class JourneyMapper implements RowMapper<Journey> {
 		journey.setType(rs.getString("type"));
 		journey.setCompany(rs.getString("company"));
 		journey.setService(rs.getString("service"));
-		journey.setTitle(buildTitle(journey));
+		journey.setTitle(this.buildTitle(journey));
 		journey.setStart(locationJDBCTemplate.getById(rs.getInt("startId")));
 		journey.setEnd(locationJDBCTemplate.getById(rs.getInt("endId")));
 		return journey;

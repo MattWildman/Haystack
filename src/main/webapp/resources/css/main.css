@@ -12,6 +12,7 @@ a:hover {
 
 .main-nav {
 	overflow: auto;
+	display: block;
 	list-style: none;
 	padding: 0;
 }
@@ -34,6 +35,10 @@ a:hover {
 .content, .main-nav {
 	max-width: 700px;
 	margin: 0 auto;
+}
+
+.login-info {
+	text-align: right;
 }
 
 .hidden {

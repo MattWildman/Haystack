@@ -25,11 +25,6 @@ public class GeneralNavigation {
 		return new ModelAndView("item-form");
 	}
 	
-	@RequestMapping(value="/Account", method=RequestMethod.GET)
-	public ModelAndView accountPage() {
-		return GeneralNavigation.renderPage("Account", "account");
-	}
-	
 	@RequestMapping(value="/Inbox", method=RequestMethod.GET)
 	public ModelAndView inboxPage() {
 		return GeneralNavigation.renderPage("Inbox", "inbox");

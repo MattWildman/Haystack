@@ -5,7 +5,7 @@
 <c:url value="/resources/css/main.css" var="cssURL" />
 <c:url value="/" var="homeURL" />
 <c:url value="/Login" var="logInURL" />
-<c:url value="j_spring_security_logout" var="logOutURL" />
+<c:url value="/j_spring_security_logout" var="logOutURL" />
 <c:url value="/FindSomeone" var="findSomeoneURL" />
 <c:url value="/Searches" var="searchesURL" />
 <c:url value="/Inbox" var="inboxURL" />
@@ -35,6 +35,10 @@
 	</ul>
 
 	<div class="content">
+		<sec:authorize access="isAuthenticated()">
+			<p class="login-info">Logged in as: 
+			<sec:authentication property="principal.username" /></p>
+		</sec:authorize>
 		<c:if test="${not empty contentBody}">
 			<jsp:include page='${contentBody}' flush="true" />
 		</c:if>
