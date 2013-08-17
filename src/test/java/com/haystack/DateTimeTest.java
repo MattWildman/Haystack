@@ -40,9 +40,9 @@ public class DateTimeTest {
 		Meeting meeting = hdbf.getMeeting(21);
 		ctx = meeting.getContexts().get(0);
 		Date e = ctx.getEarliest();
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE d MMM yyyy 'at' HH:mm");
 		String estring = sdf.format(e);
-		assertEquals("Date strings don't match", "Sun, 2 Jun 2013 at 10:30", estring);
+		assertEquals("Date strings don't match", "Sun 2 Jun 2013 at 10:30", estring);
 	}
 	
 	@Test
