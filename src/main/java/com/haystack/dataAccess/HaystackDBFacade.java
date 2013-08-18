@@ -3,9 +3,6 @@ package com.haystack.dataAccess;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +17,12 @@ import com.haystack.entities.User;
 
 @Repository
 public class HaystackDBFacade {
+	
+	private ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
+	private ContextJDBCTemplate contextJDBCTemplate = new ContextJDBCTemplate();
+	private LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
+	private ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
+	private MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();		
 	
 	public List<Meeting> getUserMeetings(Integer userId) {
 		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
@@ -40,27 +43,12 @@ public class HaystackDBFacade {
 		return buildMeeting(connection);
 	}
 
-	private Meeting buildMeeting(Connection c) {
+	public Meeting buildMeeting(Connection c) {
 		Integer conId = c.getId();
 		String title = c.getTitle();
-		String summary = c.getSummary();		
-		ContextJDBCTemplate contextJDBCTemplate = new ContextJDBCTemplate();
-		LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
-		ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
-		MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();		
+		String summary = c.getSummary();				
 		Meeting meeting = meetingJDBCTemplate.getByOwnerId("conId", conId).get(0);
 		Context context = contextJDBCTemplate.getByOwnerId("conId", conId).get(0);	
-		DateTime edt = new DateTime(context.getEarliest());
-		DateTime ldt = new DateTime(context.getLatest());
-		if (edt.getDayOfYear() == ldt.getDayOfYear() && 
-			edt.getYear() == ldt.getYear()) {
-			context.setEarliestString(edt.toString("'On' EEE d MMM yyyy 'between' HH:mm"));
-			context.setLatestString(ldt.toString("HH:mm"));
-		}
-		else {
-			context.setEarliestString(edt.toString("'Between' EEE d MMM yyyy 'at' HH:mm"));
-			context.setLatestString(ldt.toString("EEE d MMM yyyy 'at' HH:mm"));
-		}
 		if (context.getLocationType().equals("location")) {			
 			Location location = locationJDBCTemplate.getByOwnerId("ctxId", context.getId()).get(0);		
 			context.setLocation(location);		
@@ -80,27 +68,20 @@ public class HaystackDBFacade {
 		return meeting;	
 	}
 	
-	public void storeMeeting(Meeting meeting) {
+	public Integer storeMeeting(Meeting meeting) {
 		Connection connection = meeting;
-		Context context = meeting.getContexts().get(0);		
-		//set the format to match the pattern received from client form
-		DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
-		DateTime edt = format.parseDateTime(context.getEarliestString());
-		DateTime ldt = format.parseDateTime(context.getLatestString());
-		context.setEarliest(edt.toDate());
-		context.setLatest(ldt.toDate());
+		Context context = meeting.getContexts().get(0);
 		Participant user = meeting.getUser();
-		Participant other = meeting.getParticipants().get(0);		
-		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
-		ContextJDBCTemplate contextJDBCTemplate = new ContextJDBCTemplate();
-		MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
-		LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
-		ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
-		Integer loggedInUserId = SecurityNavigation.getLoggedInUserId();		
+		Participant other = meeting.getParticipants().get(0);
+		
+		Integer loggedInUserId = SecurityNavigation.getLoggedInUserId();	
+		
 		connection.setStatus("unresolved");		
+		
 		Integer conId = connectionJDBCTemplate.saveAndReturnKey(connection, loggedInUserId);
 		Integer ctxId = contextJDBCTemplate.saveAndReturnKey(context, conId);
 		Integer meetingId = meetingJDBCTemplate.saveAndReturnKey(meeting, conId);
+		
 		if (context.getLocationType().equals("location")) {
 			Location location  = context.getLocation();
 			locationJDBCTemplate.saveAndReturnKey(location, ctxId);
@@ -118,13 +99,14 @@ public class HaystackDBFacade {
 			locationJDBCTemplate.updateJourneyId(startId, journeyId);
 			locationJDBCTemplate.updateJourneyId(endId, journeyId);
 		}
+		
 		Integer userId = participantJDCBTemplate.saveAndReturnKey(user, meetingId);
 		participantJDCBTemplate.save(other, meetingId);
 		meetingJDBCTemplate.updateUserId(meetingId, userId);
+		return meetingId;
 	}
 
 	public Integer getUserId(Integer meetingId) {
-		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
 		Connection connection = connectionJDBCTemplate.getByMeetingId(meetingId);
 		UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
 		User owner = userJDBCTemplate.getByConnectionId(connection.getId());
