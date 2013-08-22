@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Repository;
 
 import com.haystack.controllers.SecurityNavigation;
 import com.haystack.entities.Connection;
@@ -15,23 +14,26 @@ import com.haystack.entities.Meeting;
 import com.haystack.entities.Participant;
 import com.haystack.entities.User;
 
-@Repository
 public class HaystackDBFacade {
 	
 	private ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
 	private ContextJDBCTemplate contextJDBCTemplate = new ContextJDBCTemplate();
 	private LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
 	private ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
-	private MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();		
+	private MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
 	
-	public List<Meeting> getUserMeetings(Integer userId) {
-		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
-		List<Connection> connections = connectionJDBCTemplate.getUserMeetings(userId);
+	private List<Meeting> connectionsToMeetings(List<Connection> connections) {
 		ArrayList<Meeting> meetings = new ArrayList<Meeting>();	
 		for (Connection c : connections) {
 			meetings.add(this.buildMeeting(c));
 		}
 		return meetings;
+	}
+	
+	public List<Meeting> getUserMeetings(Integer userId) {
+		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
+		List<Connection> connections = connectionJDBCTemplate.getUserMeetings(userId);
+		return connectionsToMeetings(connections);
 	}
 	
 	public Meeting getMeeting(Integer id) throws EmptyResultDataAccessException {
@@ -111,6 +113,17 @@ public class HaystackDBFacade {
 		UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
 		User owner = userJDBCTemplate.getByConnectionId(connection.getId());
 		return owner.getId();
+	}
+
+	public List<Meeting> getMatchedMeetings(Integer userId) {
+		List<Connection> connections = HaystackMatcher.getInstance().getMatchedConnections(userId);
+		return connectionsToMeetings(connections);
+	}
+	
+	public List<Meeting> getMeetingMatches(Integer meetingId) {
+		Integer conId = (Integer) meetingJDBCTemplate.getValueById(meetingId, "conId");
+		List<Connection> connections = HaystackMatcher.getInstance().getConnectionMatches(conId);
+		return connectionsToMeetings(connections);
 	}
 
 }

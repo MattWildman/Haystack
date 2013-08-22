@@ -55,14 +55,13 @@ public class MeetingController {
 		context.setLatest(ldt.toDate());
 		
 		HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
-		HaystackMatcher matcher = new HaystackMatcher();
 		List<Meeting> candidates = new ArrayList<Meeting>();
 		
 		Integer meetingId = haystackDBFacade.storeMeeting(meeting);
 		meeting.setId(meetingId);
 		
 		try {
-			candidates = matcher.getCandidates(meeting);
+			candidates = HaystackMatcher.getInstance().getCandidates(meeting);
 		} catch (EmptyResultDataAccessException e) {
 			return GeneralNavigation.renderPage("No matches found yet", "meeting-posted");
 		}

@@ -19,7 +19,14 @@
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
+		<beans:property name="order" value="1" />
 	</beans:bean>
+	
+	<!-- UrlBasedViewResolver to Handle Redirects & Forward -->
+	<beans:bean id="urlViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	    <beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
+	    <beans:property name="order" value="2" />
+	</beans:bean> 
 	
 	<!-- Messages -->
 	<beans:bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
