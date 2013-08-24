@@ -121,7 +121,7 @@ public class HaystackDBFacade {
 	}
 	
 	public List<Meeting> getMeetingMatches(Integer meetingId) {
-		Integer conId = (Integer) meetingJDBCTemplate.getValueById(meetingId, "conId");
+		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
 		List<Connection> connections = HaystackMatcher.getInstance().getConnectionMatches(conId);
 		return connectionsToMeetings(connections);
 	}
