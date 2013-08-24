@@ -10,6 +10,7 @@
 <c:url value="/Searches" var="searchesURL" />
 <c:url value="/Inbox" var="inboxURL" />
 <c:url value="/Account" var="accountURL" />
+<c:url value="/Matches" var="matchesURL" />
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=uTF-8">
@@ -26,13 +27,18 @@
 			<li><a href='${logInURL}'>Log in</a></li>
 		</sec:authorize>
 		<sec:authorize access="isAuthenticated()">
-			<li><a href="${findSomeoneURL}">Find someone</a></li>
-			<li><a href="${searchesURL}">Searches</a></li>
-			<li><a href="${inboxURL}">Inbox</a></li>
-			<li><a href="${accountURL}">Account</a></li>
 			<li><a href="${logOutURL}">Log out</a></li>
 		</sec:authorize>
 	</ul>
+	<sec:authorize access="isAuthenticated()">
+	<ul class="main-nav">
+		<li><a href="${findSomeoneURL}">Find someone</a></li>
+		<li><a href="${searchesURL}">Searches</a></li>
+		<li><a href="${matchesURL}">Matches</a></li>
+		<li><a href="${inboxURL}">Inbox</a></li>
+		<li><a href="${accountURL}">Account</a></li>
+	</ul>
+	</sec:authorize>
 
 	<div class="content">
 		<sec:authorize access="isAuthenticated()">
