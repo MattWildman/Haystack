@@ -1,11 +1,11 @@
 package com.haystack.controllers;
 
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.haystack.dataAccess.UserJDBCTemplate;
 import com.haystack.entities.Registration;
@@ -24,18 +24,19 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showRegistration(Map<String, Registration> model) {
+    public ModelAndView showRegistration() {
             Registration registration = new Registration();
-            model.put("registration", registration);
-            return "register";
+            ModelAndView modelAndView = GeneralNavigation.renderPage("Register", "register");
+            modelAndView.addObject("registration", registration);
+            return modelAndView;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String processRegistration(Registration registration,
-                    BindingResult result) {
+    public ModelAndView processRegistration(Registration registration,
+                    						BindingResult result) {
             registrationValidation.validate(registration, result);
             if (result.hasErrors()) {
-                    return "register";
+            	GeneralNavigation.renderPage("Register", "register");
             }
             User user = new User();
             user.setUsername(registration.getUsername());
@@ -43,7 +44,7 @@ public class RegistrationController {
             user.setEmail(registration.getEmail()); 
             UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
             userJDBCTemplate.save(user, 1);
-            return "registration-success";
+            return GeneralNavigation.renderPage("Registration success!", "registration-success");
     }
         
 }

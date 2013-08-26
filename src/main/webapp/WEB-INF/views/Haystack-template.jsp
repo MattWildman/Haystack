@@ -5,6 +5,7 @@
 <c:url value="/resources/css/main.css" var="cssURL" />
 <c:url value="/" var="homeURL" />
 <c:url value="/Login" var="logInURL" />
+<c:url value="/Register" var="registerURL" />
 <c:url value="/j_spring_security_logout" var="logOutURL" />
 <c:url value="/FindSomeone" var="findSomeoneURL" />
 <c:url value="/Searches" var="searchesURL" />
@@ -23,12 +24,6 @@
 
 	<ul class="main-nav">
 		<li><a href='${homeURL}'>Home</a></li>
-		<sec:authorize access="isAnonymous()">
-			<li><a href='${logInURL}'>Log in</a></li>
-		</sec:authorize>
-		<sec:authorize access="isAuthenticated()">
-			<li><a href="${logOutURL}">Log out</a></li>
-		</sec:authorize>
 	</ul>
 	<sec:authorize access="isAuthenticated()">
 	<ul class="main-nav">
@@ -41,10 +36,16 @@
 	</sec:authorize>
 
 	<div class="content">
-		<sec:authorize access="isAuthenticated()">
-			<p class="login-info">Logged in as: 
-			<sec:authentication property="principal.username" /></p>
+		<p class="login-info">
+		<sec:authorize access="isAnonymous()">
+			<a href='${logInURL}'>Log in</a> or <a href="${registerURL}">register</a>.
 		</sec:authorize>
+		<sec:authorize access="isAuthenticated()">
+			Logged in as: 
+			<sec:authentication property="principal.username" />. 
+			<a href="${logOutURL}">Log out</a>.
+		</sec:authorize>
+		</p>
 		<c:if test="${not empty contentBody}">
 			<jsp:include page='${contentBody}' flush="true" />
 		</c:if>

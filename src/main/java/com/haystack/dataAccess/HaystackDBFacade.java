@@ -36,11 +36,11 @@ public class HaystackDBFacade {
 		return connectionsToMeetings(connections);
 	}
 	
-	public Meeting getMeeting(Integer id) throws EmptyResultDataAccessException {
+	public Meeting getMeeting(Integer meetingId) throws EmptyResultDataAccessException {
 		ConnectionJDBCTemplate connectionJDBCTemplate = new ConnectionJDBCTemplate();
-		Connection connection = connectionJDBCTemplate.getByMeetingId(id);
+		Connection connection = connectionJDBCTemplate.getByMeetingId(meetingId);
 		if (connection == null) {
-			throw new EmptyResultDataAccessException(id);
+			throw new EmptyResultDataAccessException(meetingId);
 		}
 		return buildMeeting(connection);
 	}
