@@ -22,7 +22,7 @@ public class HaystackDBFacade {
 	private ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
 	private MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
 	
-	private List<Meeting> connectionsToMeetings(List<Connection> connections) {
+	public List<Meeting> connectionsToMeetings(List<Connection> connections) {
 		ArrayList<Meeting> meetings = new ArrayList<Meeting>();	
 		for (Connection c : connections) {
 			meetings.add(this.buildMeeting(c));
