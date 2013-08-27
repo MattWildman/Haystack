@@ -15,6 +15,7 @@ public class ConnectionMapper implements RowMapper<Connection> {
       connection.setId(rs.getInt("id"));
       connection.setTitle(rs.getString("title"));
       connection.setSummary(rs.getString("summary"));
+      connection.setUserId(rs.getInt("userId"));
       connection.setConType(rs.getString("conType"));
       connection.setStatus(rs.getString("status"));
       return connection;

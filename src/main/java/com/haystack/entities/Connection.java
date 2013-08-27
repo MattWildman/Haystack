@@ -6,6 +6,7 @@ public class Connection extends HaystackEntity {
 	
 	private String conType;
 	private String status;
+	private Integer userId;
 	
 	private List<Context> contexts;
 	
@@ -32,7 +33,7 @@ public class Connection extends HaystackEntity {
 	public void setContexts(List<Context> contexts) {
 		this.contexts = contexts;
 	}
-	
+
 	public void addContext(Context context) {
 		this.contexts.add(context);
 	}
@@ -42,6 +43,14 @@ public class Connection extends HaystackEntity {
 			if (c.getId() == ctxId)
 				contexts.remove(c);
 		}
+	}
+	
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 	
 }
