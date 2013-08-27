@@ -2,6 +2,8 @@ package com.haystack.entities;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 public class Context extends HaystackEntity{
 	
 	private String earliestString;
@@ -66,6 +68,20 @@ public class Context extends HaystackEntity{
 
 	public void setJourney(Journey journey) {
 		this.journey = journey;
+	}
+	
+	public void setDateTimeStrings() {
+		DateTime edt = new DateTime(this.getEarliest());
+		DateTime ldt = new DateTime(this.getLatest());
+		if (edt.getDayOfYear() == ldt.getDayOfYear() && 
+			edt.getYear() == ldt.getYear()) {
+			this.setEarliestString(edt.toString("'On' EEE d MMM yyyy 'between' HH:mm"));
+			this.setLatestString(ldt.toString("HH:mm"));
+		}
+		else {
+			this.setEarliestString(edt.toString("'Between' EEE d MMM yyyy 'at' HH:mm"));
+			this.setLatestString(ldt.toString("EEE d MMM yyyy 'at' HH:mm"));
+		}
 	}
 	
 }

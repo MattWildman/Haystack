@@ -116,13 +116,15 @@ public class HaystackDBFacade {
 	}
 
 	public List<Meeting> getMatchedMeetings(Integer userId) {
-		List<Connection> connections = HaystackMatcher.getInstance().getMatchedConnections(userId);
+		List<Connection> connections = HaystackMatcher.getInstance().
+									   getMatchedConnections(userId, "under review");
 		return connectionsToMeetings(connections);
 	}
 	
 	public List<Meeting> getMeetingMatches(Integer meetingId) {
 		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
-		List<Connection> connections = HaystackMatcher.getInstance().getConnectionMatches(conId);
+		List<Connection> connections = HaystackMatcher.getInstance().
+				         			   getConnectionMatches(conId, "under review");
 		return connectionsToMeetings(connections);
 	}
 

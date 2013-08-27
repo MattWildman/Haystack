@@ -56,6 +56,8 @@ public abstract class HaystackDAO<T> {
 	
 	public abstract void save(T o, Integer ownerId);
 	
+	public abstract Integer saveAndReturnKey(T o, Integer ownerId);
+	
 	public List<T> listAll() {
 		String SQL = "SELECT * FROM " + this.getTableName();
  		List <T> results = jdbcTemplateObject.query(SQL, this.getRowMapper());

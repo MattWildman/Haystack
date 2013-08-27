@@ -51,5 +51,11 @@ public class ItemJDBCTemplate extends HaystackDAO<Item> {
 		this.jdbcTemplateObject.update(SQL, conId, status, i.getTitle(), i.getSummary(), i.getManufacturer(), i.getModel(), 
 									   i.getSize(), i.getWeight());
 	}
+
+	@Override
+	public Integer saveAndReturnKey(Item o, Integer ownerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
