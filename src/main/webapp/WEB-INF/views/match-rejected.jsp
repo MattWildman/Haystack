@@ -1,3 +1,3 @@
 <h1>Match rejected</h1>
-<p>We will notify the other participant.</p>
-<p><a href="${originalURL}">Back to your matches.</a></p>
+<p>The other participant will not be able to contact you.</p>
+<p><a href="../../${originalURL}">Back to the potential matches.</a></p>

@@ -25,22 +25,27 @@ public class MessengerTest {
 		testUser = userDAO.getById(4);
 	}
 	
-	/*@Test
-	public void sendSystemMessages() {
+	@Test
+	public void sendSystemMessages() throws InterruptedException {
 		HaystackMessenger.getInstance().sendMatchMessage(3, testMeeting);
+		Thread.sleep(2000);
 		HaystackMessenger.getInstance().sendSharedConnectionMessage(3, testMeeting, testUser);
+		Thread.sleep(2000);
 	}
 	
 	@Test
-	public void sendUserMessages() {
+	public void sendUserMessages() throws InterruptedException {
 		HaystackMessenger.getInstance().sendUserMessage(13, 14, "Hello! This is my message", "First message");
+		Thread.sleep(2000);
 		HaystackMessenger.getInstance().sendUserMessage(14, 13, "Hello! This is my reply", "RE: First message");
+		Thread.sleep(2000);
 		HaystackMessenger.getInstance().sendUserMessage(13, 14, "Message body message body blah blah", "Second message");
-	}*/
+		Thread.sleep(2000);
+	}
 	
 	@Test
 	public void getThreadData() {
-		List<MessageThread> threads = HaystackMessenger.getInstance().getMessageThreads(6);
+		List<MessageThread> threads = HaystackMessenger.getInstance().getMessageThreads(3);
 		for (MessageThread t : threads) {
 			System.out.println(t.getUser().getUsername());
 			System.out.println(t.getLastMessage().getTitle());

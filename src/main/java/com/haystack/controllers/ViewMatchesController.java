@@ -46,7 +46,8 @@ private HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
 		}
 		String title = meeting.getTitle();
 		List<Meeting> candidates = haystackDBFacade.getMeetingMatches(id);
-		ModelAndView modelAndView = GeneralNavigation.renderPage("Pending matches for '" + title + "'", "candidates");
+		ModelAndView modelAndView = GeneralNavigation.renderPage("Pending matches for '" + title + "'", 
+																 "candidates");
 		modelAndView.addObject("meeting", meeting);
 		modelAndView.addObject("candidates", candidates);
 		return modelAndView;

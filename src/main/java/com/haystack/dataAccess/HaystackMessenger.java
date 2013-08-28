@@ -35,8 +35,8 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		Message message = this.setUpSystemMessage(toId);
 		String meetingName = meeting.getTitle();
 		Integer meetingId = meeting.getId();
-		String body = "<p>We've found some matches for your meeting: " + meetingName + "</p>" +
-					  "<p><a href=\"/Matches/" + meetingId + "\">View them now.</a></p>";
+		String body = "We've found some matches for your meeting: " + meetingName + "<br>" +
+					  "<a href=\"../Matches/" + meetingId + "\">View them now.</a>";
 		message.setTitle("New matches found");
 		message.setSummary(body);
 		message.setMessageType("new matches");
@@ -48,10 +48,10 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		String meetingName = meeting.getTitle();
 		String username = user.getUsername();
 		Integer userId = user.getId();
-		String body = "<p>User '" + username + "' has accepted your meeting - '" + 
-					  meetingName + "' - as a match. " +
-					  "You can start messaging them!</p>" +
-					  "<p><a href=\"/Inbox/" + userId + "\">Send them a message.</a></p>";
+		String body = "User '" + username + "' has accepted your meeting - '" + 
+					  meetingName + "' - as a match.<br>" +
+					  "You can start messaging them! " +
+					  "<a href=\"../Inbox/" + userId + "\">Send them a message.</a>";
 		message.setTitle("New shared connection!");
 		message.setSummary(body);
 		message.setMessageType("shared connection");
@@ -59,7 +59,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 	}
 	
 	public List<MessageThread> getMessageThreads(Integer userId) {
-		String SQL = "SELECT m.id, u.id, msgCount, unreadCount " +
+		String SQL = "SELECT m.id, m.date, u.id, msgCount, unreadCount " +
 					 "FROM messages m " +
 					 "INNER JOIN " +
 					 "    (SELECT threadId,  " +
@@ -70,9 +70,8 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 					 "     GROUP BY threadId) m2 ON m.date = m2.newestDate " +
 					 "AND m.threadId  = m2.threadId " +
 					 "INNER JOIN users u ON m.threadId - ? = u.id " +
-					 "WHERE isRead = 0 " +
-					 "AND (m.toUser = ? OR m.fromUser = ?) " +
-					 "ORDER BY date DESC";
+					 "WHERE (m.toUser = ? OR m.fromUser = ?) " +
+					 "ORDER BY m.date DESC";
 		List<MessageThread> results = jdbcTemplateObject.query(SQL, 
 								new Object[] {userId, userId, userId},
 								new MessageThreadMapper());

@@ -16,8 +16,10 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 	private HaystackDBFacade hdbf = new HaystackDBFacade();
 	
 	private void addCorrespondingCandidates(Integer userId, Integer userConId) {
+		
 		String SQL1 = "insert into candidates (userId, userConId, candConId) " +
 					  "values (?, ?, ?)";
+		
 		String SQL2 = "select * " +
 					  "from connections c " +
 					  "where c.id in " +
@@ -29,9 +31,11 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 					    "(select cd.userConId " +
 					     "from candidates cd " +
 					     "where cd.candConId = ?)";
+		
 		List<Connection> results = jdbcTemplateObject.query(SQL2, 
 								   new Object[] {userId, userConId, userConId}, 
 								   this.getRowMapper());
+		
 		for (Connection c : results) {
 			Integer toId = c.getUserId();
 			Integer toConId = c.getId();
@@ -39,16 +43,25 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 			HaystackMessenger.getInstance().sendMatchMessage(toId, 
 											hdbf.buildMeeting(c));
 		}
+		
 	}
 	
 	protected HaystackMatcher() {}
+	
+	public static HaystackMatcher getInstance() {
+		if(instance == null) {
+			instance = new HaystackMatcher();
+		}
+		return instance;
+	}
 	
 	public List<Connection> getConnectionMatches(Integer conId, String status) {
 		String SQL = "select * from connections c where c.id in " +
 			  		 	"(select candConId from candidates cd " +
 			  		 	 "where cd.userConId = ? " +
 			  		 	 "and cd.status = ?)";
-		List<Connection> results = jdbcTemplateObject.query(SQL, new Object[] {conId, status}, 
+		List<Connection> results = jdbcTemplateObject.query(SQL, 
+								   new Object[] {conId, status}, 
 								   this.getRowMapper());
 		return results;
 	}
@@ -58,7 +71,8 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 	  		 			"(select distinct userConId from candidates cd " +
 	  		 			 "where cd.userId = ? " +
 	  		 			 "and cd.status = ?)";
-		List<Connection> results = jdbcTemplateObject.query(SQL, new Object[] {userId, status}, 
+		List<Connection> results = jdbcTemplateObject.query(SQL, 
+								   new Object[] {userId, status}, 
 						   		   this.getRowMapper());
 		return results;
 	}
@@ -73,7 +87,8 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 						 "(select userConId from candidates cd " +
 			  		 	  "where cd.userConId = ? " +
 			  		 	  "and cd.candConId = ?)";
-		List<Connection> results = jdbcTemplateObject.query(SQL, new Object[] {userConId, candConId}, 
+		List<Connection> results = jdbcTemplateObject.query(SQL, 
+								   new Object[] {userConId, candConId}, 
 		   		   				   this.getRowMapper());
 		return !(results.isEmpty());
 	}
@@ -86,6 +101,10 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 					 "where userConId = ? " +
 					 "and candConId = ?";
 		jdbcTemplateObject.update(SQL,status,userConId,candConId);
+		if (status.equals("accepted")) {
+			HaystackConnector.getInstance().updateSharedConnections(userConId, candConId);
+			HaystackConnector.getInstance().checkForSharedConnection(userConId, candConId);
+		}
 	}
 	
 	public List<Meeting> getCandidates(Meeting target) {
@@ -99,6 +118,7 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		Date latest = context.getLatest();
 		Integer userId = hdbf.getUserId(tId);
 		Boolean isJourney = context.getLocationType().equals("journey");
+		//find matching contexts based on location
 		String SQL = 
 				"insert into candidates (userId, userConId, candConId) " +
 				"select ?, ?, c.id " +
@@ -121,10 +141,12 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 							"cos(radians(l.longd) - radians(?)) + " +
 							"sin(radians(?)) * sin(radians(l.lat)))) * 1000" +
 						"))";
-		jdbcTemplateObject.update(SQL,userId,cId,userId,latest,earliest,rad,lat,lon,lat);
+		jdbcTemplateObject.update(SQL,userId,cId,userId,latest,
+								  earliest,rad,lat,lon,lat);
 		if (isJourney) {
 			String type = context.getJourney().getType();
 			String company = context.getJourney().getCompany();
+			//find matching contexts based on journey
 			String SQL1 = 
 					"insert into candidates (userId, userConId, candConId) " +
 					"select ?, ?, c.id " +
@@ -149,7 +171,8 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 						"from candidates cd " +
 						"where userId = ? " +
 						"and userConId = ?)";
-			jdbcTemplateObject.update(SQL1,userId,cId,userId,latest,earliest,type,company,userId,cId);
+			jdbcTemplateObject.update(SQL1,userId,cId,userId,latest,
+									  earliest,type,company,userId,cId);
 		}
 		
 		List<Connection> results = this.getConnectionMatches(cId, "under review");
@@ -163,13 +186,6 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		HaystackMessenger.getInstance().sendMatchMessage(userId, target);
 		List<Meeting> candidates = hdbf.connectionsToMeetings(results);
 		return candidates;
-	}
-
-	public static HaystackMatcher getInstance() {
-		if(instance == null) {
-			instance = new HaystackMatcher();
-		}
-		return instance;
 	}
 	
 }
