@@ -1,7 +1,10 @@
 package com.haystack.dataAccess;
 
+import java.util.List;
+
 import com.haystack.entities.Meeting;
 import com.haystack.entities.Message;
+import com.haystack.entities.MessageThread;
 import com.haystack.entities.User;
 
 public class HaystackMessenger extends MessageJDBCTemplate {
@@ -11,7 +14,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 	private Message setUpSystemMessage(Integer toId) {
 		Message message = new Message();
 		message.setToUser(toId);
-		message.setFromUser(null);
+		message.setFromUser(1);
 		return message;
 	}
 	
@@ -53,6 +56,40 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		message.setSummary(body);
 		message.setMessageType("shared connection");
 		this.saveAndReturnKey(message, toId);
+	}
+	
+	public List<MessageThread> getMessageThreads(Integer userId) {
+		String SQL = "SELECT m.id, u.id, msgCount, unreadCount " +
+					 "FROM messages m " +
+					 "INNER JOIN " +
+					 "    (SELECT threadId,  " +
+					 "     MAX(date) AS newestDate,  " +
+				 	 "     COUNT(*) AS msgCount, " +
+					 "     COUNT(CASE WHEN isRead = 0 THEN 1 END) AS unreadCount " +
+					 "     FROM messages  " +
+					 "     GROUP BY threadId) m2 ON m.date = m2.newestDate " +
+					 "AND m.threadId  = m2.threadId " +
+					 "INNER JOIN users u ON m.threadId - ? = u.id " +
+					 "WHERE isRead = 0 " +
+					 "AND (m.toUser = ? OR m.fromUser = ?) " +
+					 "ORDER BY date DESC";
+		List<MessageThread> results = jdbcTemplateObject.query(SQL, 
+								new Object[] {userId, userId, userId},
+								new MessageThreadMapper());
+		return results;
+	}
+	
+	public List<Message> getMessagesInThread(Integer userId, Integer otherUserId) {
+		String SQL = "SELECT * " +
+					 "FROM messages m " +
+					 "WHERE (m.toUser = ? " +
+					 "OR m.fromUser = ?) " +
+					 "AND m.threadId - ? = ? " +
+					 "ORDER BY m.date DESC";
+		List<Message> results = jdbcTemplateObject.query(SQL, 
+								new Object[] {userId, userId, userId, otherUserId},
+								this.getRowMapper());
+		return results;
 	}
 	
 	public static HaystackMessenger getInstance() {

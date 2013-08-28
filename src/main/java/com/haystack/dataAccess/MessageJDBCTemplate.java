@@ -25,11 +25,13 @@ public class MessageJDBCTemplate extends HaystackDAO<Message> {
 	
 	@Override
 	public void save(Message m, Integer toUserId) {
-		String SQL = "INSERT INTO " + this.getTableName() + " (toUser, fromUser, msgType, subject, content) " +
+		String SQL = "INSERT INTO " + this.getTableName() + " (toUser, fromUser, msgType, subject, content, threadIs) " +
 					 "VALUES (?, ?, ?, ?, ?)";
-		this.jdbcTemplateObject.update(SQL, toUserId, m.getFromUser(), m.getMessageType(), m.getTitle(), m.getSummary());
+		this.jdbcTemplateObject.update(SQL, toUserId, m.getFromUser(), m.getMessageType(), m.getTitle(), m.getSummary(),
+									   toUserId + m.getFromUser());
 	}
 	
+	@Override
 	public Integer saveAndReturnKey(Message m, Integer toUserId) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("toUser", toUserId);
@@ -38,6 +40,7 @@ public class MessageJDBCTemplate extends HaystackDAO<Message> {
 		parameters.addValue("isRead", 0);
 		parameters.addValue("subject", m.getTitle());
 		parameters.addValue("content", m.getSummary());
+		parameters.addValue("threadId", toUserId + m.getFromUser());
 		Number longKey = this.jdbcInsert.executeAndReturnKey(parameters);
 		return longKey.intValue();
 	}
