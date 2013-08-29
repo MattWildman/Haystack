@@ -49,8 +49,6 @@ public class MessagesController {
 			return GeneralNavigation.renderPage("Not authorised", "not-authorised");
 		}
 		
-		HaystackMessenger.getInstance().markThreadAsRead(loggedInId, id);
-		
 		UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
 		User user = userJDBCTemplate.getById(id);
 		List<Message> messages = HaystackMessenger.getInstance()
@@ -65,6 +63,9 @@ public class MessagesController {
 		modelAndView.addObject("senderId", loggedInId);
 		modelAndView.addObject("user", user);
 		modelAndView.addObject("messages", messages);
+		
+		HaystackMessenger.getInstance().markThreadAsRead(loggedInId, id);
+		
 		return modelAndView;
 		
 	}
@@ -76,12 +77,6 @@ public class MessagesController {
 		messageValidation.validate(message, result);
 		if (result.hasErrors()) {
 			return this.showThread(id);
-		}
-		
-		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
-		
-		if (!HaystackMessenger.getInstance().hasPermission(loggedInId, id)) {
-			return GeneralNavigation.renderPage("Not authorised", "not-authorised");
 		}
 		
 		HaystackMessenger.getInstance().sendUserMessage(message);

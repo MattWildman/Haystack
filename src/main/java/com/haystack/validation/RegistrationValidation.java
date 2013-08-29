@@ -6,14 +6,11 @@ import org.springframework.validation.ValidationUtils;
 
 import com.haystack.entities.Registration;
 
-
 @Component("registrationValidator")
 public class RegistrationValidation {
 	
 	public boolean supports(Class<?> clazz) {
-		
 		return Registration.class.isAssignableFrom(clazz);
-		
 	}
 
 	public void validate(Object target, Errors errors) {
@@ -31,6 +28,10 @@ public class RegistrationValidation {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword",
 				"NotEmpty.registration.confirmPassword",
 				"Please confirm your password.");
+		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email",
+				"NotEmpty.registration.email",
+				"Email is required.");
 		
 		String username = registration.getUsername();
 		

@@ -19,7 +19,6 @@ public class MeetingSearchValidation implements Validator {
 	}
 	
 	public void validate(Object target, Errors errors) {
-		
 		Meeting meeting = (Meeting) target;
 		Context context = meeting.getContexts().get(0);
 		Boolean usingLocation = meeting.getContexts().get(0)
@@ -45,23 +44,29 @@ public class MeetingSearchValidation implements Validator {
 					  "Transport type is required.");		
 		}
 		
-		DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
-		DateTime edt = format.parseDateTime(context.getEarliestString());
-		DateTime ldt = format.parseDateTime(context.getLatestString());
-		
-		if (ldt.isBefore(edt)) {
+		try {
+			
+			DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+			DateTime edt = format.parseDateTime(context.getEarliestString());
+			DateTime ldt = format.parseDateTime(context.getLatestString());
+			
+			if (ldt.isBefore(edt)) {
+				errors.rejectValue("contexts[0].latestString",
+						"illogicalDate.meetingSearch.latest",
+						"The later date cannot be earlier than the earlier date!");
+			}
+			if (ldt.isAfterNow() || edt.isAfterNow()) {
+				errors.rejectValue("contexts[0].latestString",
+						"illogicalDate.meetingSearch.latest",
+						"Date cannot be in the future!");
+			}
+			
+		} catch (IllegalArgumentException e) {
 			errors.rejectValue("contexts[0].latestString",
-					"illogicalDate.meetingSearch.latest",
-					"The later date cannot be earlier than the earlier date!");
+					"invalidDate.meetingSearch.latest",
+					"Invalid date format");
 		}
-		if (ldt.isAfterNow() || edt.isAfterNow()) {
-			errors.rejectValue("contexts[0].latestString",
-					"illogicalDate.meetingSearch.latest",
-					"Date cannot be in the future!");
-		}
-		
-		
-
+	
 	}
 
 }

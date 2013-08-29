@@ -31,7 +31,6 @@
 		<li><a href="${searchesURL}">Searches</a></li>
 		<li><a href="${matchesURL}">Matches</a></li>
 		<li><a href="${inboxURL}">Inbox</a></li>
-		<li><a href="${accountURL}">Account</a></li>
 	</ul>
 	</sec:authorize>
 

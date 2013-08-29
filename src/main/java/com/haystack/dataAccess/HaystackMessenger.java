@@ -34,9 +34,10 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		String SQL = "UPDATE messages " +
 				 	 "SET isRead = 1 " +
 					 "WHERE isRead = 0 " +
-					 "AND threadId - ? = ?";
+					 "AND threadId - ? = ? " +
+					 "AND toUser = ?";
 		
-		jdbcTemplateObject.update(SQL, otherUserId, userId);
+		jdbcTemplateObject.update(SQL, otherUserId, userId, userId);
 	}
 	
 	public Boolean hasPermission(Integer userId, Integer permittedId) {
@@ -96,7 +97,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 					 "    (SELECT threadId,  " +
 					 "     MAX(date) AS newestDate,  " +
 				 	 "     COUNT(*) AS msgCount, " +
-					 "     COUNT(CASE WHEN isRead = 0 THEN 1 END) AS unreadCount " +
+					 "     COUNT(CASE WHEN isRead = 0 AND toUser = ? THEN 1 END) AS unreadCount " +
 					 "     FROM messages  " +
 					 "     GROUP BY threadId) m2 ON m.date = m2.newestDate " +
 					 "AND m.threadId  = m2.threadId " +
@@ -104,7 +105,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 					 "WHERE (m.toUser = ? OR m.fromUser = ?) " +
 					 "ORDER BY m.date DESC";
 		List<MessageThread> results = jdbcTemplateObject.query(SQL, 
-								new Object[] {userId, userId, userId},
+								new Object[] {userId, userId, userId, userId},
 								new MessageThreadMapper());
 		return results;
 	}

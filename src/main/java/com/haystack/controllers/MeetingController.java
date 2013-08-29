@@ -41,9 +41,10 @@ public class MeetingController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public ModelAndView processMeetingSearch(Meeting meeting, BindingResult result) {
+		
 		meetingSearchValidation.validate(meeting, result);
 		if (result.hasErrors()) {
-			return GeneralNavigation.renderPage("Find somone", "meeting-form");
+			return GeneralNavigation.renderPage("Find someone", "meeting-form");
 		}
 		
 		Context context = meeting.getContexts().get(0);		
