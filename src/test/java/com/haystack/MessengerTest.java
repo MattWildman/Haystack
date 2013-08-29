@@ -1,5 +1,7 @@
 package com.haystack;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import org.junit.Before;
@@ -34,23 +36,15 @@ public class MessengerTest {
 	}
 	
 	@Test
-	public void sendUserMessages() throws InterruptedException {
-		HaystackMessenger.getInstance().sendUserMessage(13, 14, "Hello! This is my message", "First message");
-		Thread.sleep(2000);
-		HaystackMessenger.getInstance().sendUserMessage(14, 13, "Hello! This is my reply", "RE: First message");
-		Thread.sleep(2000);
-		HaystackMessenger.getInstance().sendUserMessage(13, 14, "Message body message body blah blah", "Second message");
-		Thread.sleep(2000);
+	public void getThreadData() {
+		List<MessageThread> threads = HaystackMessenger.getInstance().getMessageThreads(3);
+		assertEquals("Thread number is incorrect", 1, threads.size());
 	}
 	
 	@Test
-	public void getThreadData() {
-		List<MessageThread> threads = HaystackMessenger.getInstance().getMessageThreads(3);
-		for (MessageThread t : threads) {
-			System.out.println(t.getUser().getUsername());
-			System.out.println(t.getLastMessage().getTitle());
-		}
-		
+	public void testPermissions() {
+		assertTrue(HaystackMessenger.getInstance().hasPermission(4, 6));
+		assertFalse(HaystackMessenger.getInstance().hasPermission(4, 5));
 	}
 
 }

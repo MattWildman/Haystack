@@ -2,6 +2,8 @@ package com.haystack.dataAccess;
 
 import java.util.List;
 
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+
 import com.haystack.entities.Meeting;
 import com.haystack.entities.Message;
 import com.haystack.entities.MessageThread;
@@ -20,15 +22,44 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 	
 	protected HaystackMessenger() {}
 	
-	public void sendUserMessage(Integer toId, Integer fromId, 
-								String body, String subject) {
-		Message message = new Message();
-		message.setToUser(toId);
-		message.setFromUser(fromId);
-		message.setSummary(body);
-		message.setTitle(subject);
-		message.setMessageType("user message");
-		this.saveAndReturnKey(message, toId);
+	public static HaystackMessenger getInstance() {
+		if(instance == null) {
+			instance = new HaystackMessenger();
+		}
+		return instance;
+	}
+	
+	public void markThreadAsRead(Integer userId, Integer otherUserId) {
+		
+		String SQL = "UPDATE messages " +
+				 	 "SET isRead = 1 " +
+					 "WHERE isRead = 0 " +
+					 "AND threadId - ? = ?";
+		
+		jdbcTemplateObject.update(SQL, otherUserId, userId);
+	}
+	
+	public Boolean hasPermission(Integer userId, Integer permittedId) {
+		
+		if (permittedId == 1) {
+			return true;
+		}
+		
+		String SQL = "SELECT userId " +
+					 "FROM messagepermissions " +
+					 "WHERE userId = ? " +
+					 "AND permittedId = ?";
+		
+		SqlRowSet srs = jdbcTemplateObject.queryForRowSet(SQL, 
+										  new Object[] {userId, permittedId});
+		return srs.first();
+	}
+	
+	public void sendUserMessage(Message message) {
+		if (this.hasPermission(message.getFromUser(), message.getToUser())) {
+			message.setMessageType("user message");
+			this.saveAndReturnKey(message, message.getToUser());
+		}
 	}
 	
 	public void sendMatchMessage(Integer toId, Meeting meeting) {
@@ -89,13 +120,6 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 								new Object[] {userId, userId, userId, otherUserId},
 								this.getRowMapper());
 		return results;
-	}
-	
-	public static HaystackMessenger getInstance() {
-		if(instance == null) {
-			instance = new HaystackMessenger();
-		}
-		return instance;
 	}
 	
 }
