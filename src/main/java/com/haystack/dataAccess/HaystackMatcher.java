@@ -23,14 +23,14 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		String SQL2 = "select * " +
 					  "from connections c " +
 					  "where c.id in " +
-					    "(select cd.candConId " +
-					     "from candidates cd " +
-					     "where cd.userId = ? " +
-					     "and cd.userConId = ?) " +
+					  "  (select cd.candConId " +
+					  "   from candidates cd " +
+					  "   where cd.userId = ? " +
+					  "   and cd.userConId = ?) " +
 					  "and c.id not in " +
-					    "(select cd.userConId " +
-					     "from candidates cd " +
-					     "where cd.candConId = ?)";
+					  "  (select cd.userConId " +
+					  "   from candidates cd " +
+					  "   where cd.candConId = ?)";
 		
 		List<Connection> results = jdbcTemplateObject.query(SQL2, 
 								   new Object[] {userId, userConId, userConId}, 
@@ -57,9 +57,9 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 	
 	public List<Connection> getConnectionMatches(Integer conId, String status) {
 		String SQL = "select * from connections c where c.id in " +
-			  		 	"(select candConId from candidates cd " +
-			  		 	 "where cd.userConId = ? " +
-			  		 	 "and cd.status = ?)";
+			  		 "	 (select candConId from candidates cd " +
+			  		 "	  where cd.userConId = ? " +
+			  		 "	  and cd.status = ?)";
 		List<Connection> results = jdbcTemplateObject.query(SQL, 
 								   new Object[] {conId, status}, 
 								   this.getRowMapper());

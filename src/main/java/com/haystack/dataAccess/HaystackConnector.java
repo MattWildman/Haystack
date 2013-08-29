@@ -24,23 +24,24 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 	
 	public void updateSharedConnections(Integer userConId, Integer candConId) {
 		
-		String SQL = "insert into sharedconnections (conId1, conId2) " +
-					 "select cd.userConId, cd.candConId " +
-					 "from candidates cd " +
-					 "where status = 'accepted' " +
-					 "and cd.userConId = ? " +
-					 "and cd.candConId = ? " +
-					 "and exists " +
-					 "	(select * " +
-					 "	 from candidates cd1 " +
-					 "   where status = 'accepted' " +
-					 "   and cd1.userConId = ? " +
-					 "   and cd1.candConId = ?)";
+		String SQL = "INSERT INTO sharedconnections (conId1, conId2) " +
+					 "SELECT cd.userConId, cd.candConId " +
+					 "FROM candidates cd " +
+					 "WHERE status = 'accepted' " +
+					 "AND cd.userConId = ? " +
+					 "AND cd.candConId = ? " +
+					 "AND EXISTS " +
+					 "	(SELECT * " +
+					 "	 FROM candidates cd1 " +
+					 "   WHERE status = 'accepted' " +
+					 "   AND cd1.userConId = ? " +
+					 "   AND cd1.candConId = ?)";
 		
 		jdbcTemplateObject.update(SQL, userConId, candConId, 
 								  candConId, userConId);
 		
-		//MySQL trigger then updates both connection statuses to 'matched'
+		//MySQL trigger updates both connection statuses to 'matched'
+		//MySQL trigger adds userIds to messagepermissions table
 		
 	}
 
