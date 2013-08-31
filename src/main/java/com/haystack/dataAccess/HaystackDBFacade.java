@@ -44,6 +44,10 @@ public class HaystackDBFacade {
 		}
 		return buildMeeting(connection);
 	}
+	
+	public Meeting buildMeeting(Integer connectionId) {
+		return this.buildMeeting(connectionJDBCTemplate.getById(connectionId));
+	}
 
 	public Meeting buildMeeting(Connection c) {
 		Integer conId = c.getId();
@@ -115,43 +119,28 @@ public class HaystackDBFacade {
 		return owner.getId();
 	}
 
-	public List<Meeting> getMatchedMeetings(Integer userId) {
+	public List<Meeting> getMatchedMeetings(Integer userId, String status) {
 		List<Connection> connections = HaystackMatcher.getInstance().
-									   getMatchedConnections(userId, "under review");
-		return connectionsToMeetings(connections);
-	}
-	
-	public List<Meeting> getMeetingsWithRejectedMatches(Integer userId) {
-		List<Connection> connections = HaystackMatcher.getInstance().
-									   getMatchedConnections(userId, "rejected");
-		return connectionsToMeetings(connections);
-	}
-	
-	public List<Meeting> getMeetingMatches(Integer meetingId) {
-		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
-		List<Connection> connections = HaystackMatcher.getInstance().
-				         			   getConnectionMatches(conId, "under review");
-		return connectionsToMeetings(connections);
-	}
-	
-	public List<Meeting> getMeetingRejections(Integer meetingId) {
-		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
-		List<Connection> connections = HaystackMatcher.getInstance().
-				         			   getConnectionMatches(conId, "rejected");
+									   getMatchedConnections(userId, status);
 		return connectionsToMeetings(connections);
 	}
 
-	public List<Meeting> getMeetingsWithAcceptedMatches(Integer userId) {
-		List<Connection> connections = HaystackMatcher.getInstance().
-				   getMatchedConnections(userId, "accepted");
-		return connectionsToMeetings(connections);
-	}
-
-	public List<Meeting> getAcceptedMatches(Integer meetingId) {
+	public List<Meeting> getMeetingMatches(Integer meetingId, String status) {
 		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
 		List<Connection> connections = HaystackMatcher.getInstance().
-				         			   getConnectionMatches(conId, "accepted");
+				         			   getConnectionMatches(conId, status);
 		return connectionsToMeetings(connections);
 	}
 
+	public Boolean checkForSharedConnections(Integer mId, Integer id) {
+		Integer userConId = connectionJDBCTemplate.getByMeetingId(mId).getId();
+		Integer candConId = connectionJDBCTemplate.getByMeetingId(id).getId();
+		return HaystackConnector.getInstance()
+								.checkForSharedConnection(userConId, candConId);
+	}
+	
+	public Integer getConnectionId(Integer meetingId) {
+		return connectionJDBCTemplate.getByMeetingId(meetingId).getId();
+	}
+	
 }

@@ -7,7 +7,7 @@
 	<form:password path="password" /><br>
 	Confirm password <span class="error"><form:errors path="confirmPassword" /></span><br>
 	<form:password path="confirmPassword" /><br>
-	Email <span class="error"><form:errors path="email" /></span></td><br>
+	Email <span class="error"><form:errors path="email" /></span><br>
 	<form:input type="email" path="email" /><br>
 	<input type="submit" value="Submit" />
 </form:form>

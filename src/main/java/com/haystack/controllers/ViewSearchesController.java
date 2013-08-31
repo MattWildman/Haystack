@@ -2,7 +2,6 @@ package com.haystack.controllers;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,33 +29,30 @@ public class ViewSearchesController {
 	
 	@RequestMapping(value="/Searches/{id}", method=RequestMethod.GET)
 	public ModelAndView showSearch(@PathVariable Integer id) {
+		
 		Meeting meeting = null;
 		Integer ownerId = 0;
 		String meetingTitle = "";
+		
 		try {
+			
 			meeting = haystackDBFacade.getMeeting(id);
 			ownerId = haystackDBFacade.getUserId(id);
 			meetingTitle = meeting.getTitle();
 			Context context = meeting.getContexts().get(0);
-			DateTime edt = new DateTime(context.getEarliest());
-			DateTime ldt = new DateTime(context.getLatest());
-			if (edt.getDayOfYear() == ldt.getDayOfYear() && 
-				edt.getYear() == ldt.getYear()) {
-				context.setEarliestString(edt.toString("'On' EEE d MMM yyyy 'between' HH:mm"));
-				context.setLatestString(ldt.toString("HH:mm"));
-			}
-			else {
-				context.setEarliestString(edt.toString("'Between' EEE d MMM yyyy 'at' HH:mm"));
-				context.setLatestString(ldt.toString("EEE d MMM yyyy 'at' HH:mm"));
-			}
+			context.setDateTimeStrings();
+			
 		} catch (EmptyResultDataAccessException e) {
 			return GeneralNavigation.renderPage("Search not found", "404");
 		}
+		
 		ModelAndView modelAndView = GeneralNavigation.renderPage(meetingTitle, "post");
 		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
+		
 		if (ownerId != loggedInId) {
 			return GeneralNavigation.renderPage("Not authorised", "not-authorised");
 		}
+		
 		modelAndView.addObject("meeting", meeting);
 		return modelAndView;
 	}

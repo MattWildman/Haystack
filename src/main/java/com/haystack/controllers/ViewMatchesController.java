@@ -19,65 +19,65 @@ import com.haystack.entities.Meeting;
 
 @Controller
 public class ViewMatchesController {
-	
-private HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
-	
+
+	private HaystackDBFacade hdbf = new HaystackDBFacade();
+
 	private Boolean goodStatus(String status) {
-		return status.equalsIgnoreCase("pending") ||
-			   status.equalsIgnoreCase("accepted") ||
-			   status.equalsIgnoreCase("rejected");
+		return status.equalsIgnoreCase("pending")
+				|| status.equalsIgnoreCase("accepted")
+				|| status.equalsIgnoreCase("rejected");
 	}
 
-	@RequestMapping(value="/Matches/{URLstatus}", method=RequestMethod.GET)
-	public ModelAndView showMeetings(@PathVariable String URLstatus) {	
-		if(!this.goodStatus(URLstatus)) {
+	@RequestMapping(value = "/Matches/{URLstatus}", method = RequestMethod.GET)
+	public ModelAndView showMeetings(@PathVariable String URLstatus) {
+		if (!this.goodStatus(URLstatus)) {
 			return GeneralNavigation.renderPage("Page not found", "404");
 		}
 		String status = URLstatus.toLowerCase();
-		ModelAndView modelAndView = GeneralNavigation.renderPage("Searches with " + status + " matches", 
-																 "matches");
+		ModelAndView modelAndView = GeneralNavigation.renderPage(
+				"Searches with " + status + " matches", "matches");
 		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
-		List<Meeting> meetings = haystackDBFacade.getMatchedMeetings(loggedInId);
+		List<Meeting> meetings = hdbf.getMatchedMeetings(loggedInId, status);
 		modelAndView.addObject("status", status);
 		modelAndView.addObject("meetings", meetings);
 		return modelAndView;
 	}
-	
-	@RequestMapping(value="/Matches/{URLstatus}/{id}", method=RequestMethod.GET)
+
+	@RequestMapping(value = "/Matches/{URLstatus}/{id}", method = RequestMethod.GET)
 	public ModelAndView showMatches(@PathVariable String URLstatus,
 									@PathVariable Integer id) {
-		if(!this.goodStatus(URLstatus)) {
+		if (!this.goodStatus(URLstatus)) {
 			return GeneralNavigation.renderPage("Page not found", "404");
 		}
 		String status = URLstatus.toLowerCase();
 		Meeting meeting = new Meeting();
 		try {
-			meeting = haystackDBFacade.getMeeting(id);
+			meeting = hdbf.getMeeting(id);
 			Integer loggedInId = SecurityNavigation.getLoggedInUserId();
-			Integer ownerId = haystackDBFacade.getUserId(id);
+			Integer ownerId = hdbf.getUserId(id);
 			if (ownerId != loggedInId) {
-				return GeneralNavigation.renderPage("Not authorised", "not-authorised");
+				return GeneralNavigation.renderPage("Not authorised",
+						"not-authorised");
 			}
 		} catch (EmptyResultDataAccessException e) {
 			return GeneralNavigation.renderPage("Search not found", "404");
 		}
 		String title = meeting.getTitle();
-		List<Meeting> candidates = haystackDBFacade.getMeetingMatches(id);
-		ModelAndView modelAndView = GeneralNavigation.renderPage(URLstatus + " matches for '" + title + "'", 
-																 "candidates");
+		List<Meeting> candidates = hdbf.getMeetingMatches(id, status);
+		ModelAndView modelAndView = GeneralNavigation.renderPage(URLstatus
+				+ " matches for '" + title + "'", "candidates");
 		modelAndView.addObject("status", status);
 		modelAndView.addObject("meeting", meeting);
 		modelAndView.addObject("candidates", candidates);
 		return modelAndView;
 	}
-	
-	@RequestMapping(value="/Matches/{URLstatus}/{mId}/{id}", method=RequestMethod.GET)
+
+	@RequestMapping(value = "/Matches/{URLstatus}/{mId}/{id}", method = RequestMethod.GET)
 	public ModelAndView showMatch(@PathVariable String URLstatus,
-								  @PathVariable Integer mId, 
-								  @PathVariable Integer id,
-								  @RequestParam(value="action", required=false) String action,
+								  @PathVariable Integer mId, @PathVariable Integer id,
+								  @RequestParam(value = "action", required = false) String action,
 								  HttpServletRequest request) {
-		if(!this.goodStatus(URLstatus)) {
+		if (!this.goodStatus(URLstatus)) {
 			return GeneralNavigation.renderPage("Page not found", "404");
 		}
 		String status = URLstatus.toLowerCase();
@@ -85,50 +85,63 @@ private HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
 		Integer ownerId = 0;
 		String candidateTitle = "";
 		try {
-			ownerId = haystackDBFacade.getUserId(mId);
-			
-			//security test
+			ownerId = hdbf.getUserId(mId);
+
+			// security test
 			Integer loggedInId = SecurityNavigation.getLoggedInUserId();
 			if (ownerId != loggedInId) {
-				return GeneralNavigation.renderPage("Not authorised", "not-authorised");
+				return GeneralNavigation.renderPage("Not authorised",
+						"not-authorised");
 			}
-			
-			candidate = haystackDBFacade.getMeeting(id);
-			
-			//security test
+			candidate = hdbf.getMeeting(id);
+
+			// security test
 			if (!HaystackMatcher.getInstance().areCandidates(mId, id)) {
 				return GeneralNavigation.renderPage("Match not found", "404");
 			}
-			
 			candidateTitle = candidate.getTitle();
-			
 			Context context = candidate.getContexts().get(0);
 			context.setDateTimeStrings();
 
 		} catch (EmptyResultDataAccessException e) {
 			return GeneralNavigation.renderPage("Match not found", "404");
 		}
-		
+
 		if (request.getParameterMap().containsKey("action")) {
 			if (action.equals("accept") && !status.equalsIgnoreCase("accepted")) {
 				HaystackMatcher.getInstance().updateCandidateStatus("accepted", mId, id);
-				ModelAndView acceptedView = GeneralNavigation.renderPage("You have accepted '" + 
-																		 candidateTitle + "'", 
-																		 "match-accepted");
+
+				// MySQL trigger checks for mutual acceptance and if found:
+				// 1. adds both connection ids to shared connections table
+				// 2. updates both connection statuses to 'matched'
+				// 3. adds userIds to messagepermissions table
+
+				ModelAndView acceptedView = GeneralNavigation.renderPage(
+											"You have accepted '" + candidateTitle + "'",
+											"match-accepted");
+
+				Boolean mutualAcceptance = hdbf.checkForSharedConnections(mId, id);
+				acceptedView.addObject("success", mutualAcceptance);
 				return acceptedView;
 			}
+
 			else if (action.equals("reject") && !status.equalsIgnoreCase("rejected")) {
-				HaystackMatcher.getInstance().updateCandidateStatus("rejected", mId, id);
-				ModelAndView rejectedView = GeneralNavigation.renderPage("You have rejected '" +
-																		 candidateTitle + "'", 
-																		 "match-rejected");
-				String originalURL = "Matches/" + URLstatus + "/" + mId.toString();
+
+				HaystackMatcher.getInstance().updateCandidateStatus("rejected",
+						mId, id);
+				ModelAndView rejectedView = GeneralNavigation.renderPage(
+											"You have rejected '" + candidateTitle + "'",
+											"match-rejected");
+				String originalURL = "Matches/" + URLstatus + "/"
+						+ mId.toString();
 				rejectedView.addObject("originalURL", originalURL);
 				return rejectedView;
+
 			}
 		}
-		
-		ModelAndView modelAndView = GeneralNavigation.renderPage(URLstatus + " match: '" + candidateTitle + "'", "candidate");
+
+		ModelAndView modelAndView = GeneralNavigation.renderPage(URLstatus +
+									" match: '" + candidateTitle + "'", "candidate");
 		modelAndView.addObject("status", status);
 		modelAndView.addObject("candidate", candidate);
 		modelAndView.addObject("originalURL", request.getRequestURL());

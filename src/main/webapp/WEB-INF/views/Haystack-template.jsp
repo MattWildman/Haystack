@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
-  "http://www.w3.org/TR/html4/loose.dtd">
+
 <c:url value="/resources/css/main.css" var="cssURL" />
 <c:url value="/" var="homeURL" />
 <c:url value="/Login" var="logInURL" />
@@ -12,6 +11,10 @@
 <c:url value="/Inbox" var="inboxURL" />
 <c:url value="/Account" var="accountURL" />
 <c:url value="/Matches" var="matchesURL" />
+<c:url value="/Connections" var="connectionsURL" />
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=uTF-8">
@@ -30,6 +33,7 @@
 		<li><a href="${findSomeoneURL}">Find someone</a></li>
 		<li><a href="${searchesURL}">Searches</a></li>
 		<li><a href="${matchesURL}">Matches</a></li>
+		<li><a href="${connectionsURL}">Connections</a></li>
 		<li><a href="${inboxURL}">Inbox</a></li>
 	</ul>
 	</sec:authorize>

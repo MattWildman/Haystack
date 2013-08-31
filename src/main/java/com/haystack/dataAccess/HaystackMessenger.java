@@ -47,7 +47,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		}
 		
 		String SQL = "SELECT userId " +
-					 "FROM messagepermissions " +
+					 "FROM messagepermissionsview " +
 					 "WHERE userId = ? " +
 					 "AND permittedId = ?";
 		

@@ -16,7 +16,7 @@
 	<resources mapping="/resources/**" location="/resources/" />
 	
 	<beans:bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-	<beans:property name="order" value="0" />
+	<beans:property name="order" value="1" />
 	    <beans:property name="pathMatcher">
 	        <beans:bean class="com.haystack.controllers.CaseInsensitiveAntPathMatcher" />
 	    </beans:property>
@@ -24,7 +24,7 @@
 	
 	<!-- For case insensitive URLs -->
 	<beans:bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-	    <beans:property name="order" value="0" />
+	    <beans:property name="order" value="2" />
 	    <beans:property name="pathMatcher">
 	        <beans:bean class="com.haystack.controllers.CaseInsensitiveAntPathMatcher" />
 	    </beans:property>
@@ -34,13 +34,13 @@
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
-		<beans:property name="order" value="1" />
+		<beans:property name="order" value="3" />
 	</beans:bean>
 	
 	<!-- UrlBasedViewResolver to Handle Redirects & Forward -->
 	<beans:bean id="urlViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
 	    <beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
-	    <beans:property name="order" value="2" />
+	    <beans:property name="order" value="4" />
 	</beans:bean> 
 	
 	<!-- Messages -->

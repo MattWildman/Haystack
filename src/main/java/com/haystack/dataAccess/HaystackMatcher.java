@@ -93,18 +93,19 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		return !(results.isEmpty());
 	}
 	
-	public void updateCandidateStatus(String status, Integer userMeetingId, Integer candMeetingId) {
+	public void updateCandidateStatus(String status, Integer userMeetingId, 
+									  Integer candMeetingId) {
+		
 		Integer userConId = this.getByMeetingId(userMeetingId).getId();
 		Integer candConId = this.getByMeetingId(candMeetingId).getId();
+		
 		String SQL = "update candidates " +
 					 "set status = ? " +
 					 "where userConId = ? " +
 					 "and candConId = ?";
+		
 		jdbcTemplateObject.update(SQL,status,userConId,candConId);
-		if (status.equals("accepted")) {
-			HaystackConnector.getInstance().updateSharedConnections(userConId, candConId);
-			HaystackConnector.getInstance().checkForSharedConnection(userConId, candConId);
-		}
+
 	}
 	
 	public List<Meeting> getCandidates(Meeting target) {

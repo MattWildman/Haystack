@@ -9,9 +9,13 @@
 	<http auto-config="true" use-expressions="true">
 	
 		<intercept-url pattern="/FindSomeone" access="isAuthenticated()" />
+		<intercept-url pattern="/Inbox" access="isAuthenticated()" />
 		<intercept-url pattern="/Inbox/*" access="isAuthenticated()" />
 		<intercept-url pattern="/Searches" access="isAuthenticated()" />
 		<intercept-url pattern="/Searches/*" access="isAuthenticated()" />
+		<intercept-url pattern="/Matches" access="isAuthenticated()" />
+		<intercept-url pattern="/Matches/*" access="isAuthenticated()" />
+		<intercept-url pattern="/Account" access="isAuthenticated()" />
 		
 		<form-login login-page="/Login" 
 					default-target-url="/Login-success"
@@ -23,11 +27,6 @@
 	
 	<authentication-manager alias="authenticationManager">
 	   <authentication-provider>
-	      <!-- Toggle comments to switch between authentication providers -->
-	      <!--<user-service>
-	      		<user name="user" password="user" authorities="ROLE_USER" />
-				<user name="admin" password="admin" authorities="ROLE_ADMIN" />
-		  </user-service>-->
 		  <jdbc-user-service data-source-ref="dataSource"/>
 	   </authentication-provider>
 	</authentication-manager>

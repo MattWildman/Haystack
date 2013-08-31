@@ -3,7 +3,7 @@
 <c:if test="${not empty connections}">
 	<ul>
 		<c:forEach items="${connections}" var="connection">
-			<li><a href="<c:url value="/Connections/" />${connection.id}/${connection.id}">${connection.title}</a></li>
+			<li><a href="<c:url value="${connection.id}"/>">${connection.title}</a></li>
 		</c:forEach>
 	</ul>
 </c:if>
