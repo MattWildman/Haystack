@@ -46,6 +46,14 @@ a:hover {
 	padding: 15px;
 }
 
+#actions {
+	padding-bottom: 5px;
+}
+
+#menu {
+	padding-top: 5px;
+}
+
 .login-info {
 	text-align: right;
 }

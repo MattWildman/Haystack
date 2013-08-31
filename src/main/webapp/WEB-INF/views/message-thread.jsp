@@ -47,5 +47,5 @@
 </c:if>
 
 <c:if test="${empty messages}">
-	<p>You haven't received any messages from ${user.username} yet.</p>
+	<p>You haven't exchanged any messages with ${user.username} yet.</p>
 </c:if>

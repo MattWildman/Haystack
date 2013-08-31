@@ -1,7 +1,10 @@
 package com.haystack.dataAccess;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.haystack.entities.Connection;
@@ -87,7 +90,6 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 								   this.getRowMapper());
 
 		return results;
-		
 	}
 	
 	public Boolean areConnected(Integer meetingId, Integer candId) {
@@ -105,4 +107,48 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 		return srs.first();
 	}
 
+	public Map<Meeting, List<Meeting>> getHistory(Integer userId, Integer contactId) {
+		
+		String SQL1 = "SELECT * " +
+					  "FROM connections c " +
+					  "WHERE c.userId = ? " +
+					  "AND EXISTS " +
+					  "	  (SELECT * " +
+					  "    FROM sharedconnectionsview s " +
+					  "    WHERE s.conId1 = c.id " +
+					  "    AND s.conId2 IN " +
+					  "      (SELECT c1.id " +
+					  "       FROM connections c1 " +
+					  "       WHERE c1.userId = ?))";
+		
+		String SQL2 = "SELECT * " +
+				 	  "FROM connections c " +
+				 	  "WHERE c.userId = ? " +
+				 	  "AND c.id IN " +
+				 	  "	 (SELECT s.conId2 " +
+				 	  "    FROM sharedconnectionsview s " +
+				 	  "    WHERE s.conId1 = ?)";
+		
+		List<Connection> results = jdbcTemplateObject.query(SQL1, 
+								   new Object[] {userId, contactId}, 
+								   this.getRowMapper());
+		
+		if (results.isEmpty()) {
+			throw new EmptyResultDataAccessException(contactId);
+		}
+		
+		//else
+		Map<Meeting, List<Meeting>> connectionMappings = new HashMap<Meeting, List<Meeting>>();
+		for (Connection c : results) {
+			List<Connection> sharedCons = jdbcTemplateObject.query(SQL2, 
+									      new Object[] {contactId, c.getId()}, 
+									      this.getRowMapper());
+			Meeting ownerMeeting = hdbf.buildMeeting(c);
+			List<Meeting> contactMeetings = hdbf.connectionsToMeetings(sharedCons);
+			connectionMappings.put(ownerMeeting, contactMeetings);
+		}
+		
+		return connectionMappings;
+	}
+	
 }

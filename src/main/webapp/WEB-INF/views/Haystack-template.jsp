@@ -12,6 +12,7 @@
 <c:url value="/Account" var="accountURL" />
 <c:url value="/Matches" var="matchesURL" />
 <c:url value="/Connections" var="connectionsURL" />
+<c:url value="/Contacts" var="contactsURL" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
   "http://www.w3.org/TR/html4/loose.dtd">
@@ -25,15 +26,16 @@
 
 <body>
 
-	<ul class="main-nav">
+	<ul class="main-nav" id="actions">
 		<li><a href='${homeURL}'>Home</a></li>
 		<li><a href="${findSomeoneURL}">Find someone</a></li>
 	</ul>
 	<sec:authorize access="isAuthenticated()">
-	<ul class="main-nav">
+	<ul class="main-nav" id="menu">
 		<li><a href="${searchesURL}">Searches</a></li>
 		<li><a href="${matchesURL}">Matches</a></li>
 		<li><a href="${connectionsURL}">Connections</a></li>
+		<li><a href="${contactsURL}">Contacts</a></li>
 		<li><a href="${inboxURL}">Inbox</a></li>
 	</ul>
 	</sec:authorize>

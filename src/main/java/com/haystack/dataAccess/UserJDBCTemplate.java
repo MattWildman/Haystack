@@ -1,5 +1,7 @@
 package com.haystack.dataAccess;
 
+import java.util.List;
+
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
@@ -48,6 +50,19 @@ public class UserJDBCTemplate extends HaystackDAO<User> {
 		String SQL = "SELECT * FROM users WHERE id IN (SELECT c.userId FROM connections c WHERE c.id = ?)";
 		User result = jdbcTemplateObject.queryForObject(SQL, new Object[]{conId}, this.getRowMapper());
 		return result;
+	}
+	
+	public List<User> getContacts(Integer userId) {
+		String SQL = "SELECT * " +
+					 "FROM users " +
+					 "WHERE id IN " +
+					 "	(SELECT permittedId " +
+					 "	 FROM messagepermissionsview " +
+					 "	 WHERE userId = ?)";
+		
+		List<User> results = jdbcTemplateObject.query(SQL, new Object[]{userId}, 
+													  this.getRowMapper());
+		return results;
 	}
 
 	@Override

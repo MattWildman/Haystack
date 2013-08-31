@@ -1,2 +1,3 @@
+<%@ page isErrorPage="true" %>
 <h1>Error!</h1>
-<p>It doesn't look like this page exists!</p>
+<p>${pageContext.exception.message}</p>

@@ -176,7 +176,7 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 									  earliest,type,company,userId,cId);
 		}
 		
-		List<Connection> results = this.getConnectionMatches(cId, "under review");
+		List<Connection> results = this.getConnectionMatches(cId, "pending");
 		
 		if (results.isEmpty()) {
 			throw new EmptyResultDataAccessException(tId);

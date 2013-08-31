@@ -21,6 +21,7 @@ public class HaystackDBFacade {
 	private LocationJDBCTemplate locationJDBCTemplate = new LocationJDBCTemplate();
 	private ParticipantJDBCTemplate participantJDCBTemplate = new ParticipantJDBCTemplate();
 	private MeetingJDBCTemplate meetingJDBCTemplate = new MeetingJDBCTemplate();
+	private UserJDBCTemplate userJDBCTemplate = new UserJDBCTemplate();
 	
 	public List<Meeting> connectionsToMeetings(List<Connection> connections) {
 		ArrayList<Meeting> meetings = new ArrayList<Meeting>();	
@@ -141,6 +142,10 @@ public class HaystackDBFacade {
 	
 	public Integer getConnectionId(Integer meetingId) {
 		return connectionJDBCTemplate.getByMeetingId(meetingId).getId();
+	}
+
+	public List<User> getContacts(Integer userId) {
+		return userJDBCTemplate.getContacts(userId);
 	}
 	
 }

@@ -25,6 +25,7 @@ public class ViewConnectionsController {
 	
 	@RequestMapping(value="/Connections", method=RequestMethod.GET)
 	public ModelAndView showUserConnections() {
+		
 		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
 		List<Meeting> sharedMeetings = hdbf.connectionsToMeetings(HaystackConnector.getInstance()
 									   							  .getSharedConnections(loggedInId));
@@ -33,6 +34,7 @@ public class ViewConnectionsController {
 																 "shared-connections");
 		modelAndView.addObject("connections", sharedMeetings);
 		return modelAndView;
+		
 	}
 	
 	@RequestMapping(value="/Connections/{id}", method=RequestMethod.GET)
@@ -74,7 +76,7 @@ public class ViewConnectionsController {
 	@RequestMapping(value="/Connections/{cId}/{id}", method=RequestMethod.GET)
 	public ModelAndView showConnection(@PathVariable Integer cId,
 									   @PathVariable Integer id,
-									   @RequestParam(value = "action", required = false) String action,
+									   @RequestParam(value="action", required=false) String action,
 									   HttpServletRequest request) {
 		Meeting connection = null;
 		Integer ownerId = 0;
@@ -86,7 +88,7 @@ public class ViewConnectionsController {
 			Integer loggedInId = SecurityNavigation.getLoggedInUserId();
 			if (ownerId != loggedInId) {
 				return GeneralNavigation.renderPage("Not authorised",
-						"not-authorised");
+													"not-authorised");
 			}
 
 			// security test

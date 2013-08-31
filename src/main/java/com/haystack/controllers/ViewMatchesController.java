@@ -75,7 +75,7 @@ public class ViewMatchesController {
 	@RequestMapping(value = "/Matches/{URLstatus}/{mId}/{id}", method = RequestMethod.GET)
 	public ModelAndView showMatch(@PathVariable String URLstatus,
 								  @PathVariable Integer mId, @PathVariable Integer id,
-								  @RequestParam(value = "action", required = false) String action,
+								  @RequestParam(value="action", required=false) String action,
 								  HttpServletRequest request) {
 		if (!this.goodStatus(URLstatus)) {
 			return GeneralNavigation.renderPage("Page not found", "404");
