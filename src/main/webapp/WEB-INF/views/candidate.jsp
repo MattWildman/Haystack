@@ -34,5 +34,9 @@ and ${candidate.contexts[0].latestString}</p>
 	<p>Height: ${candidate.participants[0].height}</p>
 	<p>Description: ${candidate.participants[0].summary}</p>
 
-<p><a href="${originalURL}?action=accept">This is the correct match!</a></p>
-<p><a href="${originalURL}?action=reject">This is not the correct match.</a></p>
+<c:if test="${status != \"accepted\" }">
+	<p><a href="${originalURL}?action=accept">This is the correct match!</a></p>
+</c:if>
+<c:if test="${status != \"rejected\" }">
+	<p><a href="${originalURL}?action=reject">This is not the correct match.</a></p>
+</c:if>

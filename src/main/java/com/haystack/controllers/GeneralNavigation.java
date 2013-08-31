@@ -20,6 +20,11 @@ public class GeneralNavigation {
 		return GeneralNavigation.renderPage("Home", "index");
 	}
 	
+	@RequestMapping(value="/Matches", method=RequestMethod.GET)
+	public ModelAndView showMatchesIndexPage() {
+		return GeneralNavigation.renderPage("Your matches", "all-matches");
+	}
+	
 	@RequestMapping(value="/findSomething", method=RequestMethod.GET)
 	public ModelAndView findItemPage() {
 		return new ModelAndView("item-form");

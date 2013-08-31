@@ -22,17 +22,34 @@ public class ViewMatchesController {
 	
 private HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
 	
-	@RequestMapping(value="/Matches", method=RequestMethod.GET)
-	public ModelAndView showMatchedMeetings() {	
-		ModelAndView modelAndView = GeneralNavigation.renderPage("Matched searches", "matches");
+	private Boolean goodStatus(String status) {
+		return status.equalsIgnoreCase("pending") ||
+			   status.equalsIgnoreCase("accepted") ||
+			   status.equalsIgnoreCase("rejected");
+	}
+
+	@RequestMapping(value="/Matches/{URLstatus}", method=RequestMethod.GET)
+	public ModelAndView showMeetings(@PathVariable String URLstatus) {	
+		if(!this.goodStatus(URLstatus)) {
+			return GeneralNavigation.renderPage("Page not found", "404");
+		}
+		String status = URLstatus.toLowerCase();
+		ModelAndView modelAndView = GeneralNavigation.renderPage("Searches with " + status + " matches", 
+																 "matches");
 		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
 		List<Meeting> meetings = haystackDBFacade.getMatchedMeetings(loggedInId);
+		modelAndView.addObject("status", status);
 		modelAndView.addObject("meetings", meetings);
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/Matches/{id}", method=RequestMethod.GET)
-	public ModelAndView showMatches(@PathVariable Integer id) {
+	@RequestMapping(value="/Matches/{URLstatus}/{id}", method=RequestMethod.GET)
+	public ModelAndView showMatches(@PathVariable String URLstatus,
+									@PathVariable Integer id) {
+		if(!this.goodStatus(URLstatus)) {
+			return GeneralNavigation.renderPage("Page not found", "404");
+		}
+		String status = URLstatus.toLowerCase();
 		Meeting meeting = new Meeting();
 		try {
 			meeting = haystackDBFacade.getMeeting(id);
@@ -46,18 +63,24 @@ private HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
 		}
 		String title = meeting.getTitle();
 		List<Meeting> candidates = haystackDBFacade.getMeetingMatches(id);
-		ModelAndView modelAndView = GeneralNavigation.renderPage("Pending matches for '" + title + "'", 
+		ModelAndView modelAndView = GeneralNavigation.renderPage(URLstatus + " matches for '" + title + "'", 
 																 "candidates");
+		modelAndView.addObject("status", status);
 		modelAndView.addObject("meeting", meeting);
 		modelAndView.addObject("candidates", candidates);
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/Matches/{mId}/{id}", method=RequestMethod.GET)
-	public ModelAndView showMatch(@PathVariable Integer mId, 
+	@RequestMapping(value="/Matches/{URLstatus}/{mId}/{id}", method=RequestMethod.GET)
+	public ModelAndView showMatch(@PathVariable String URLstatus,
+								  @PathVariable Integer mId, 
 								  @PathVariable Integer id,
 								  @RequestParam(value="action", required=false) String action,
 								  HttpServletRequest request) {
+		if(!this.goodStatus(URLstatus)) {
+			return GeneralNavigation.renderPage("Page not found", "404");
+		}
+		String status = URLstatus.toLowerCase();
 		Meeting candidate = null;
 		Integer ownerId = 0;
 		String candidateTitle = "";
@@ -87,23 +110,26 @@ private HaystackDBFacade haystackDBFacade = new HaystackDBFacade();
 		}
 		
 		if (request.getParameterMap().containsKey("action")) {
-			if (action.equals("accept")) {
+			if (action.equals("accept") && !status.equalsIgnoreCase("accepted")) {
 				HaystackMatcher.getInstance().updateCandidateStatus("accepted", mId, id);
-				ModelAndView acceptedView = GeneralNavigation.renderPage("You have accepted '" + candidateTitle + "'", 
-											"match-accepted");
+				ModelAndView acceptedView = GeneralNavigation.renderPage("You have accepted '" + 
+																		 candidateTitle + "'", 
+																		 "match-accepted");
 				return acceptedView;
 			}
-			else if (action.equals("reject")) {
+			else if (action.equals("reject") && !status.equalsIgnoreCase("rejected")) {
 				HaystackMatcher.getInstance().updateCandidateStatus("rejected", mId, id);
-				ModelAndView rejectedView = GeneralNavigation.renderPage("You have rejected '" + candidateTitle + "'", 
-											"match-rejected");
-				String originalURL = "Matches/" + mId.toString();
+				ModelAndView rejectedView = GeneralNavigation.renderPage("You have rejected '" +
+																		 candidateTitle + "'", 
+																		 "match-rejected");
+				String originalURL = "Matches/" + URLstatus + "/" + mId.toString();
 				rejectedView.addObject("originalURL", originalURL);
 				return rejectedView;
 			}
 		}
 		
-		ModelAndView modelAndView = GeneralNavigation.renderPage("Possible match: '" + candidateTitle + "'", "candidate");
+		ModelAndView modelAndView = GeneralNavigation.renderPage(URLstatus + " match: '" + candidateTitle + "'", "candidate");
+		modelAndView.addObject("status", status);
 		modelAndView.addObject("candidate", candidate);
 		modelAndView.addObject("originalURL", request.getRequestURL());
 		return modelAndView;

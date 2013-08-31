@@ -9,6 +9,5 @@
 </c:if>
 <c:if test="${empty connections}">
 	<p>You haven't made any connections yet.</p>
-	<p><a href="/FindSomeone">Search for someone now</a> or 
-	<a href="/Matches">view your matches</a>.</p>
+	<p><a href="/FindSomeone">Search for someone now</a> or <a href="/Matches">view your matches</a>.</p>
 </c:if>

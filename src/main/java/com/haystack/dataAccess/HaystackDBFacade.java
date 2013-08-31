@@ -121,10 +121,36 @@ public class HaystackDBFacade {
 		return connectionsToMeetings(connections);
 	}
 	
+	public List<Meeting> getMeetingsWithRejectedMatches(Integer userId) {
+		List<Connection> connections = HaystackMatcher.getInstance().
+									   getMatchedConnections(userId, "rejected");
+		return connectionsToMeetings(connections);
+	}
+	
 	public List<Meeting> getMeetingMatches(Integer meetingId) {
 		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
 		List<Connection> connections = HaystackMatcher.getInstance().
 				         			   getConnectionMatches(conId, "under review");
+		return connectionsToMeetings(connections);
+	}
+	
+	public List<Meeting> getMeetingRejections(Integer meetingId) {
+		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
+		List<Connection> connections = HaystackMatcher.getInstance().
+				         			   getConnectionMatches(conId, "rejected");
+		return connectionsToMeetings(connections);
+	}
+
+	public List<Meeting> getMeetingsWithAcceptedMatches(Integer userId) {
+		List<Connection> connections = HaystackMatcher.getInstance().
+				   getMatchedConnections(userId, "accepted");
+		return connectionsToMeetings(connections);
+	}
+
+	public List<Meeting> getAcceptedMatches(Integer meetingId) {
+		Integer conId = connectionJDBCTemplate.getByMeetingId(meetingId).getId();
+		List<Connection> connections = HaystackMatcher.getInstance().
+				         			   getConnectionMatches(conId, "accepted");
 		return connectionsToMeetings(connections);
 	}
 
