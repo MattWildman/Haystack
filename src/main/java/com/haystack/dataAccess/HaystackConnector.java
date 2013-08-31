@@ -63,7 +63,7 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 		
 		String SQL = "SELECT * FROM connections " +
 					 "WHERE userId = ? " +
-					 "AND c.id IN (SELECT conId1 FROM sharedconnectionsview)";
+					 "AND id IN (SELECT conId1 FROM sharedconnectionsview)";
 		
 		List<Connection> results = jdbcTemplateObject.query(SQL, 
 								   new Object[] {userId}, 
@@ -73,7 +73,9 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 		
 	}
 	
-	public List<Connection> getCorrespondingSharedConnections(Integer connectionId) {
+	public List<Connection> getCorrespondingSharedConnections(Integer meetingId) {
+		
+		Integer conId = hdbf.getConnectionId(meetingId);
 		
 		String SQL = "SELECT * FROM connections " +
 					 "WHERE id IN" +
@@ -81,7 +83,7 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 					 "	 WHERE conId1 = ?)";
 	
 		List<Connection> results = jdbcTemplateObject.query(SQL, 
-								   new Object[] {connectionId}, 
+								   new Object[] {conId}, 
 								   this.getRowMapper());
 
 		return results;

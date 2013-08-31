@@ -30,7 +30,7 @@ public class ViewConnectionsController {
 									   							  .getSharedConnections(loggedInId));
 		
 		ModelAndView modelAndView = GeneralNavigation.renderPage("Your shared connections", 
-																 "connections");
+																 "shared-connections");
 		modelAndView.addObject("connections", sharedMeetings);
 		return modelAndView;
 	}
@@ -58,12 +58,14 @@ public class ViewConnectionsController {
 			return GeneralNavigation.renderPage("Connection not found", "404");
 		}
 		
-		List<Meeting> sharedMeetings = hdbf.connectionsToMeetings(HaystackConnector.getInstance()
-				  						   						  .getSharedConnections(id));
+		List<Meeting> sharedMeetings = hdbf.connectionsToMeetings(
+									   HaystackConnector.getInstance()
+									   .getCorrespondingSharedConnections(id));
 		
-		ModelAndView modelAndView = GeneralNavigation.renderPage("Shared connections of " + meetingTitle, 
-																 "connection");
+		ModelAndView modelAndView = GeneralNavigation.renderPage("Connections with " + meetingTitle, 
+																 "connections");
 		
+		modelAndView.addObject("target", meeting);
 		modelAndView.addObject("connections", sharedMeetings);
 		return modelAndView;
 		
@@ -86,12 +88,12 @@ public class ViewConnectionsController {
 				return GeneralNavigation.renderPage("Not authorised",
 						"not-authorised");
 			}
-			connection = hdbf.getMeeting(id);
 
 			// security test
 			if (!HaystackConnector.getInstance().areConnected(cId, id)) {
 				return GeneralNavigation.renderPage("Connection not found", "404");
 			}
+			connection = hdbf.getMeeting(id);
 			connectionTitle = connection.getTitle();
 			Context context = connection.getContexts().get(0);
 			context.setDateTimeStrings();

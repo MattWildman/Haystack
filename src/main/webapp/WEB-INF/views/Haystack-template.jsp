@@ -27,10 +27,10 @@
 
 	<ul class="main-nav">
 		<li><a href='${homeURL}'>Home</a></li>
+		<li><a href="${findSomeoneURL}">Find someone</a></li>
 	</ul>
 	<sec:authorize access="isAuthenticated()">
 	<ul class="main-nav">
-		<li><a href="${findSomeoneURL}">Find someone</a></li>
 		<li><a href="${searchesURL}">Searches</a></li>
 		<li><a href="${matchesURL}">Matches</a></li>
 		<li><a href="${connectionsURL}">Connections</a></li>

@@ -1,6 +1,6 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <h1>Login to Haystack</h1>
-<c:if test="${error == true}">
+<c:if test="${error}">
 	<b class="error">Invalid username or password.</b>
 </c:if>
 <form method="post" action="<c:url value='j_spring_security_check'/>">
@@ -8,3 +8,4 @@
 	Password<br><input type="password" name="j_password" id="j_password" size="30" maxlength="32" /><br>
 	<input type="submit" value="Login" />
 </form>
+<p>Don't have an account? <a href="<c:url value="Register" />">Register here</a>.</p>

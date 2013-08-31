@@ -1,5 +1,12 @@
 * {
 	font-family: Arial, Helvetica, sans-serif;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+body {
+	background-color: #f2f2f2;
 }
 
 a {
@@ -35,6 +42,8 @@ a:hover {
 .content, .main-nav {
 	max-width: 700px;
 	margin: 0 auto;
+	background-color: #fff;
+	padding: 15px;
 }
 
 .login-info {
