@@ -64,6 +64,19 @@ public class UserJDBCTemplate extends HaystackDAO<User> {
 													  this.getRowMapper());
 		return results;
 	}
+	
+	public List<User> getBlockedContacts(Integer userId) {
+		String SQL = "SELECT * " +
+					 "FROM users " +
+					 "WHERE id IN " +
+					 "	(SELECT blockedId " +
+					 "	 FROM blockings " +
+					 "	 WHERE userId = ?)";
+		
+		List<User> results = jdbcTemplateObject.query(SQL, new Object[]{userId}, 
+				  									  this.getRowMapper());
+		return results;
+	}
 
 	@Override
 	public void save(User user, Integer ownerId) {
@@ -78,6 +91,7 @@ public class UserJDBCTemplate extends HaystackDAO<User> {
 		//MySQL trigger then adds new username to authorites table
  	}
 	
+	@Override
 	public Integer saveAndReturnKey(User user, Integer ownerId) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("username", user.getUsername());

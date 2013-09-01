@@ -150,5 +150,15 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 		
 		return connectionMappings;
 	}
+
+	public void blockContact(Integer userId, Integer blockedId) {
+		String SQL = "INSERT INTO blockings (userId, blockedId) VALUES (?, ?)";
+		jdbcTemplateObject.update(SQL, userId, blockedId);
+	}
+
+	public void unBlockContact(Integer userId, Integer permittedId) {
+		String SQL = "DELETE FROM blockings WHERE userId = ? AND blockedId = ?";
+		jdbcTemplateObject.update(SQL, userId, permittedId);
+	}
 	
 }

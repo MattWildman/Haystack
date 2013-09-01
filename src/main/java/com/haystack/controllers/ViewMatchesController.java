@@ -111,11 +111,6 @@ public class ViewMatchesController {
 			if (action.equals("accept") && !status.equalsIgnoreCase("accepted")) {
 				HaystackMatcher.getInstance().updateCandidateStatus("accepted", mId, id);
 
-				// MySQL trigger checks for mutual acceptance and if found:
-				// 1. adds both connection ids to shared connections table
-				// 2. updates both connection statuses to 'matched'
-				// 3. adds userIds to messagepermissions table
-
 				ModelAndView acceptedView = GeneralNavigation.renderPage(
 											"You have accepted '" + candidateTitle + "'",
 											"match-accepted");

@@ -147,5 +147,9 @@ public class HaystackDBFacade {
 	public List<User> getContacts(Integer userId) {
 		return userJDBCTemplate.getContacts(userId);
 	}
+
+	public List<User> getBlockedContacts(Integer userId) {
+		return userJDBCTemplate.getBlockedContacts(userId);
+	}
 	
 }

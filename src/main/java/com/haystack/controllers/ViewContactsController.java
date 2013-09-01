@@ -31,12 +31,25 @@ public class ViewContactsController {
 		
 		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
 		List<User> contacts = hdbf.getContacts(loggedInId);
+		List<User> blockedContacts = hdbf.getBlockedContacts(loggedInId);
 		
 		ModelAndView modelAndView = GeneralNavigation.renderPage("Your contacts", 
 																 "contacts");
+		modelAndView.addObject("blockedContacts", blockedContacts);
 		modelAndView.addObject("contacts", contacts);
 		return modelAndView;
 		
+	}
+	
+	@RequestMapping(value="/Contacts/Blocked", method=RequestMethod.GET)
+	public ModelAndView showBlockedContacts() {
+		
+		Integer loggedInId = SecurityNavigation.getLoggedInUserId();
+		ModelAndView modelAndView = GeneralNavigation.renderPage("Blocked contacts", 
+				 												 "blocked-contacts");
+		List<User> blockedContacts = hdbf.getBlockedContacts(loggedInId);
+		modelAndView.addObject("blockedContacts", blockedContacts);
+		return modelAndView;
 	}
 	
 	@RequestMapping(value="/Contacts/{id}", method=RequestMethod.GET)
@@ -49,6 +62,25 @@ public class ViewContactsController {
 		try {
 			
 			contact = userJDBCTemplate.getById(id);
+			
+			if (request.getParameterMap().containsKey("action")) {
+				if (action.equals("block")) {
+					HaystackConnector.getInstance().blockContact(loggedInId, id);
+					ModelAndView blockedView = GeneralNavigation.renderPage(
+											   contact.getUsername() + " blocked", 
+							 				   "blocked-success");
+					blockedView.addObject("contact", contact);
+					return blockedView;
+				}
+				if (action.equals("unblock")) {
+					HaystackConnector.getInstance().unBlockContact(loggedInId, id);
+					ModelAndView unblockedView = GeneralNavigation.renderPage(
+												 contact.getUsername() + " unblocked", 
+												 "unblocked-success");
+					unblockedView.addObject("contact", contact);
+					return unblockedView;
+				}
+			}
 			
 			if(!HaystackMessenger.getInstance().hasPermission(loggedInId, id)) {
 				return GeneralNavigation.renderPage("Not authorised",

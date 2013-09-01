@@ -10,12 +10,16 @@
 	
 		<intercept-url pattern="/FindSomeone" access="isAuthenticated()" />
 		<intercept-url pattern="/Inbox" access="isAuthenticated()" />
-		<intercept-url pattern="/Inbox/*" access="isAuthenticated()" />
+		<intercept-url pattern="/Inbox/.*" access="isAuthenticated()" />
 		<intercept-url pattern="/Searches" access="isAuthenticated()" />
-		<intercept-url pattern="/Searches/*" access="isAuthenticated()" />
+		<intercept-url pattern="/Searches/.*" access="isAuthenticated()" />
 		<intercept-url pattern="/Matches" access="isAuthenticated()" />
-		<intercept-url pattern="/Matches/*" access="isAuthenticated()" />
+		<intercept-url pattern="/Matches/.*" access="isAuthenticated()" />
 		<intercept-url pattern="/Account" access="isAuthenticated()" />
+		<intercept-url pattern="/Contacts" access="isAuthenticated()" />
+		<intercept-url pattern="/Contacts/.*" access="isAuthenticated()" />
+		<intercept-url pattern="/Connections" access="isAuthenticated()" />
+		<intercept-url pattern="/Connections/.*" access="isAuthenticated()" />
 		
 		<form-login login-page="/Login" 
 					default-target-url="/Login-success"
