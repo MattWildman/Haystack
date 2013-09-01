@@ -7,11 +7,6 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	
 	<!-- Initialisation for data source -->
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	   <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-	   <property name="url" value="jdbc:mysql://localhost:3306/haystack"/>
-	   <property name="username" value="admin"/>
-	   <property name="password" value="test"/>
-	</bean>
+	<bean id="haystackDataSource" class="com.haystack.dataAccess.HaystackDataSource" />
 	
 </beans>

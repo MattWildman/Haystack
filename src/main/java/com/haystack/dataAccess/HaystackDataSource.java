@@ -2,7 +2,7 @@ package com.haystack.dataAccess;
 
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-public class HaystackDataSource extends DriverManagerDataSource {
+public final class HaystackDataSource extends DriverManagerDataSource {
 	
 	public HaystackDataSource() {
 		super();

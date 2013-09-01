@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="fm" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:if test="${user.id != 1}">
 
@@ -39,7 +40,7 @@
 			<c:if test="${not empty message.title}">
 				<h2>${message.title}</h2>
 			</c:if>
-				<p>${message.date}</p>
+				<p><strong><fm:formatDate value="${message.date}" pattern="E dd/MM/yyyy 'at' HH:mm:ss" /></strong></p>
 				<p>${message.summary}</p>
 			</li>
 		</c:forEach>
