@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.haystack.entities.Connection;
 import com.haystack.entities.Context;
@@ -56,10 +57,18 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 	}
 	
 	public List<Connection> getConnectionMatches(Integer conId, String status) {
-		String SQL = "select * from connections c where c.id in " +
+		
+		String SQL = "select * from connections c " +
+					 "where c.id in " +
 			  		 "	 (select candConId from candidates cd " +
 			  		 "	  where cd.userConId = ? " +
-			  		 "	  and cd.status = ?)";
+			  		 "	  and cd.status = ?" +
+			  		 "	  and cd.userConId not in" +
+			  		 "	  	(select cd1.candConId " +
+			  		 "		 from candidates cd1 " +
+			  		 "		 where cd1.userConId = cd.candConId " +
+			  		 "	     and status = 'rejected'))";
+		
 		List<Connection> results = jdbcTemplateObject.query(SQL, 
 								   new Object[] {conId, status}, 
 								   this.getRowMapper());
@@ -67,10 +76,17 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 	}
 	
 	public List<Connection> getMatchedConnections(Integer userId, String status) {
+		
 		String SQL = "select * from connections c where c.id in " +
 	  		 			"(select distinct userConId from candidates cd " +
 	  		 			 "where cd.userId = ? " +
-	  		 			 "and cd.status = ?)";
+	  		 			 "and cd.status = ? " +
+	  		 			 "and exists " +
+	  		 			 "	(select * " +
+	  		 			 "	 from candidates cd1 " +
+	  		 			 "	 where cd1.userConId = cd.userConId " +
+	  		 			 "	 and status <> 'rejected'))";
+		
 		List<Connection> results = jdbcTemplateObject.query(SQL, 
 								   new Object[] {userId, status}, 
 						   		   this.getRowMapper());
@@ -83,14 +99,16 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		Integer userConId = connection.getId();
 		connection = connectionJDBCTemplate.getByMeetingId(candId);
 		Integer candConId = connection.getId();
-		String SQL = "select * from connections c where c.id in" +
-						 "(select userConId from candidates cd " +
-			  		 	  "where cd.userConId = ? " +
-			  		 	  "and cd.candConId = ?)";
-		List<Connection> results = jdbcTemplateObject.query(SQL, 
-								   new Object[] {userConId, candConId}, 
-		   		   				   this.getRowMapper());
-		return !(results.isEmpty());
+		
+		String SQL = "SELECT * FROM connections c WHERE c.id IN " +
+					 "	 (SELECT userConId FROM candidates cd " +
+			  		 "	  WHERE cd.userConId = ? " +
+			  		 "	  AND cd.candConId = ? " +
+			  		 "	  AND cd.status <> 'rejected')";
+		
+		SqlRowSet srs = jdbcTemplateObject.queryForRowSet(SQL, 
+								   new Object[] {candConId, userConId});
+		return srs.first();
 	}
 	
 	public void updateCandidateStatus(String status, Integer userMeetingId, 
@@ -99,10 +117,10 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		Integer userConId = this.getByMeetingId(userMeetingId).getId();
 		Integer candConId = this.getByMeetingId(candMeetingId).getId();
 		
-		String SQL = "update candidates " +
-					 "set status = ? " +
-					 "where userConId = ? " +
-					 "and candConId = ?";
+		String SQL = "UPDATE candidates " +
+					 "SET status = ? " +
+					 "WHERE userConId = ? " +
+					 "AND candConId = ?";
 		
 		jdbcTemplateObject.update(SQL,status,userConId,candConId);
 
@@ -125,7 +143,7 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 				"select ?, ?, c.id " +
 				"from connections c " +
 				"where c.conType = 'meeting' " +
-				"and c.status = 'unresolved' " +
+				"and c.status <> 'resolved' " +
 				"and c.userId <> ? " +
 				"and exists " +
 				   "(select * " +
@@ -153,7 +171,7 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 					"select ?, ?, c.id " +
 					"from connections c " +
 					"where c.conType = 'meeting' " +
-					"and c.status = 'unresolved' " +
+					"and c.status <> 'resolved' " +
 					"and c.userId <> ? " +
 					"and exists " +
 						"(select * " +

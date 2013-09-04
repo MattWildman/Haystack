@@ -127,7 +127,7 @@ public class ViewMatchesController {
 				ModelAndView rejectedView = GeneralNavigation.renderPage(
 											"You have rejected '" + candidateTitle + "'",
 											"match-rejected");
-				String originalURL = "Matches/" + URLstatus + "/"
+				String originalURL = "/Matches/" + URLstatus + "/"
 						+ mId.toString();
 				rejectedView.addObject("originalURL", originalURL);
 				return rejectedView;

@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<h1>Connections with ${target.title}</h1>
+<h1>Connections with '${target.title}'</h1>
 <c:if test="${not empty connections}">
 	<ul>
 		<c:forEach items="${connections}" var="connection">

@@ -68,7 +68,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		String meetingName = meeting.getTitle();
 		Integer meetingId = meeting.getId();
 		String body = "We've found some matches for your meeting: " + meetingName + "<br>" +
-					  "<a href=\"../Matches/" + meetingId + "\">View them now.</a>";
+					  "<a href=\"../Matches/Pending/" + meetingId + "\">View them now.</a>";
 		message.setTitle("New matches found");
 		message.setSummary(body);
 		message.setMessageType("new matches");

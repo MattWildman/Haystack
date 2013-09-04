@@ -68,6 +68,7 @@ public class MeetingController {
 		}
 		
 		ModelAndView modelAndView = GeneralNavigation.renderPage("Success!", "meeting-posted");
+		modelAndView.addObject("meeting", meeting);
 		modelAndView.addObject("candidates", candidates);
 		return modelAndView;
 	}

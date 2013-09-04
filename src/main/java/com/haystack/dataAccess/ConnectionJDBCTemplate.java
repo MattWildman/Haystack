@@ -20,7 +20,7 @@ public class ConnectionJDBCTemplate extends HaystackDAO<Connection> {
 	}
 
 	
-	public void updateStatus(Integer id, Integer status) {
+	public void updateStatus(Integer id, String status) {
 		this.update(id, "status", status);
 	}
 	

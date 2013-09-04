@@ -31,35 +31,36 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 		
 		String SQL = "SELECT * " +
 					 "FROM connections c " +
-					 "WHERE c.id = " +
-					 "	 (SELECT cd.userConId" +
-					 "	  FROM candidates cd " +
-					 "	  WHERE cd.status = 'accepted' " +
-					 "	  AND cd.candConId = ? " +
-					 "	  AND cd.userConId = ?)";
+					 "WHERE c.id = ? " +
+					 "AND c.id IN " +
+					 "	 (SELECT conId1 " +
+					 "	  FROM sharedconnectionsview " +
+					 "	  WHERE conId2 = ?)";
 		
-		List<Connection> results = jdbcTemplateObject.query(SQL, 
-								   new Object[] {userConId, candConId}, 
-								   this.getRowMapper());
+		SqlRowSet srs = jdbcTemplateObject.queryForRowSet(SQL, 
+								   new Object[] {userConId, candConId});
 		
-		if (!results.isEmpty()) {
+		if (srs.first()) {
+		
+			this.updateStatus(userConId, "connected");
+			this.updateStatus(candConId, "connected");
 			
 			Meeting meeting1 = hdbf.buildMeeting(this.getById(userConId));
 			User user1 = userJDBCTemplate.getByConnectionId(userConId);
+				
+			Meeting meeting2 = hdbf.buildMeeting(this.getById(candConId));
+			User user2 = userJDBCTemplate.getByConnectionId(candConId);
 			
-			for (Connection c : results) {
-				Meeting meeting2 = hdbf.buildMeeting(c);
-				User user2 = userJDBCTemplate.getByConnectionId(c.getId());
-				HaystackMessenger.getInstance()
+			HaystackMessenger.getInstance()
 								 .sendSharedConnectionMessage(user1.getId(), meeting1, user2);
-				HaystackMessenger.getInstance()
+			HaystackMessenger.getInstance()
 				 				 .sendSharedConnectionMessage(user2.getId(), meeting2, user1);
-			}
 			
 			return true;
-		}
-		
+		} 
+
 		return false;
+		
 	}
 	
 	public List<Connection> getSharedConnections(Integer userId) {
