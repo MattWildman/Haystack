@@ -104,7 +104,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 					 "INNER JOIN users u ON m.threadId - ? = u.id " +
 					 "WHERE (m.toUser = ? OR m.fromUser = ?) " +
 					 "AND u.id IN (1 OR (SELECT permittedId FROM messagepermissionsview " +
-					 "		   			 WHERE userId = 3)) " +
+					 "		   			 WHERE userId = ?)) " +
 					 "ORDER BY m.date DESC";
 		List<MessageThread> results = jdbcTemplateObject.query(SQL, 
 								new Object[] {userId, userId, userId, userId, userId},
