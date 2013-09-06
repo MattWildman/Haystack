@@ -33,10 +33,10 @@
 	<sec:authorize access="isAuthenticated()">
 	<ul class="main-nav" id="menu">
 		<li><a href="${searchesURL}">Searches</a></li>
-		<li><a href="${matchesURL}">Matches</a></li>
+		<li><a href="${matchesURL}">Matches<c:if test="${pendingCount > 0}"> (${pendingCount})</c:if></a></li>
 		<li><a href="${connectionsURL}">Connections</a></li>
 		<li><a href="${contactsURL}">Contacts</a></li>
-		<li><a href="${inboxURL}">Inbox</a></li>
+		<li><a href="${inboxURL}">Inbox<c:if test="${unreadCount > 0}"> (${unreadCount})</c:if></a></li>
 	</ul>
 	</sec:authorize>
 

@@ -113,16 +113,29 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 	}
 	
 	public List<Message> getMessagesInThread(Integer userId, Integer otherUserId) {
+		
 		String SQL = "SELECT * " +
 					 "FROM messages m " +
 					 "WHERE (m.toUser = ? " +
 					 "OR m.fromUser = ?) " +
 					 "AND m.threadId - ? = ? " +
 					 "ORDER BY m.date DESC";
+		
 		List<Message> results = jdbcTemplateObject.query(SQL, 
 								new Object[] {userId, userId, userId, otherUserId},
 								this.getRowMapper());
 		return results;
+	}
+
+	public Integer getUnreadCount(Integer userId) {
+		
+		String SQL = "SELECT COUNT(*) " +
+					 "FROM messages " +
+					 "WHERE toUser = ? " +
+					 "AND isRead = 0";
+		
+		Integer unreadCount = jdbcTemplateObject.queryForInt(SQL, userId);
+		return unreadCount;
 	}
 	
 }

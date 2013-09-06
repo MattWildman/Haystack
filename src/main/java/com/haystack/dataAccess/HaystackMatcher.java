@@ -206,5 +206,17 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		List<Meeting> candidates = hdbf.connectionsToMeetings(results);
 		return candidates;
 	}
+
+	public Integer getPendingCount(Integer userId) {
+		
+		String SQL = "SELECT COUNT(*) " +
+				 	 "FROM candidates " +
+				 	 "WHERE userId = ? " +
+				 	 "AND status = 'pending'";
+	
+		Integer pendingCount = jdbcTemplateObject.queryForInt(SQL, userId);
+		
+		return pendingCount;
+	}
 	
 }

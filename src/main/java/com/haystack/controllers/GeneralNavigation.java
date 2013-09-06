@@ -5,11 +5,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.haystack.dataAccess.HaystackMatcher;
+import com.haystack.dataAccess.HaystackMessenger;
+
 @Controller
 public class GeneralNavigation {
 	
 	public static ModelAndView renderPage(String title, String bodyTemplate) {
 		ModelAndView modelAndView = new ModelAndView("Haystack-template");
+		Integer unreadCount = 0;
+		Integer pendingCount = 0;
+		try {
+			Integer loggedInId = SecurityNavigation.getLoggedInUserId();
+			unreadCount = HaystackMessenger.getInstance()
+						  .getUnreadCount(loggedInId);
+			pendingCount = HaystackMatcher.getInstance()
+						   .getPendingCount(loggedInId);
+		}
+		catch (Exception e) {}
+		modelAndView.addObject("unreadCount", unreadCount);
+		modelAndView.addObject("pendingCount", pendingCount);
 		modelAndView.addObject("contentTitle", title);
 		modelAndView.addObject("contentBody", bodyTemplate + ".jsp");
 		return modelAndView;
@@ -25,7 +40,7 @@ public class GeneralNavigation {
 		return GeneralNavigation.renderPage("Your matches", "all-matches");
 	}
 	
-	@RequestMapping(value="/findSomething", method=RequestMethod.GET)
+	@RequestMapping(value="/FindSomething", method=RequestMethod.GET)
 	public ModelAndView findItemPage() {
 		return new ModelAndView("item-form");
 	}
