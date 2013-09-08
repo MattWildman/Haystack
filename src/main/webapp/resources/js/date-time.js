@@ -33,12 +33,12 @@ $('input[name="use-range"').change(function() {
 	if ($this.val() == 'yes') {
 		$('#single-date-fields').addClass('hidden');
 		$('#date-range-fields').removeClass('hidden');
-		useRange = false;
+		useRange = true;
 	}
 	else if ($this.val() == 'no') {
 		$('#date-range-fields').addClass('hidden');
 		$('#single-date-fields').removeClass('hidden');
-		useRange = true;
+		useRange = false;
 	}
 });
 

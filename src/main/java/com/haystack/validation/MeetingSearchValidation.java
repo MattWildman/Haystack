@@ -9,10 +9,14 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.haystack.entities.Context;
+import com.haystack.entities.Journey;
 import com.haystack.entities.Meeting;
 
 @Component("meetingSearchValidator")
 public class MeetingSearchValidation implements Validator {
+	
+	private final Integer MAX_RAD = 10000;
+	private final Integer MIN_RAD = 10;
 	
 	public boolean supports(Class<?> clazz) {
 		return Meeting.class.isAssignableFrom(clazz);
@@ -37,11 +41,40 @@ public class MeetingSearchValidation implements Validator {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contexts[0].location.rad",
 					  "NotEmpty.meetingSearch.locationRad",
 					  "Radius is required.");
+			
+			if (context.getLocation().getRad() > MAX_RAD ||
+				context.getLocation().getRad() < MIN_RAD) {
+				errors.rejectValue("contexts[0].location.rad",
+						"invalidLocationRadius.meetingSearch.radius",
+						"Invalid search radius");
+			}
 		}
 		else {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contexts[0].journey.type",
 					  "NotEmpty.meetingSearch.journeyType",
-					  "Transport type is required.");		
+					  "Transport type is required.");
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contexts[0].journey.company",
+					  "NotEmpty.meetingSearch.journeyCompany",
+					  "Transport company is required.");
+			
+			Journey journey = context.getJourney();
+			
+			if (journey.getStart() != null) {
+				if (journey.getStart().getRad() > MAX_RAD ||
+					journey.getStart().getRad() < MIN_RAD) {
+					errors.rejectValue("contexts[0].journey.start.rad",
+									   "invalidLocationRadius.meetingSearch.radius",
+									   "Invalid search radius");
+				}
+			}
+			if (journey.getEnd() != null) {
+				if (journey.getEnd().getRad() > MAX_RAD ||
+					journey.getEnd().getRad() < MIN_RAD) {
+					errors.rejectValue("contexts[0].journey.end.rad",
+									   "invalidLocationRadius.meetingSearch.radius",
+									   "Invalid search radius");
+				}
+			}
 		}
 		
 		try {
@@ -66,6 +99,7 @@ public class MeetingSearchValidation implements Validator {
 					"invalidDate.meetingSearch.latest",
 					"Invalid date format");
 		}
+		
 	
 	}
 

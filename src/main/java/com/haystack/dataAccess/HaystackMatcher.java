@@ -175,21 +175,21 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 					"and c.userId <> ? " +
 					"and exists " +
 						"(select * " +
-						"from contexts cx " +
-						"where cx.earliest < ? " +
-						"and cx.latest > ? " +
-						"and cx.conId = c.id " +
-						"and exists " +
+						" from contexts cx " +
+						" where cx.earliest < ? " +
+						" and cx.latest > ? " +
+						" and cx.conId = c.id " +
+						" and exists " +
 							"(select * " +
-							"from journeys j " +
-							"where j.ctxId = cx.id " +
-							"and j.type = ? " +
-							"and j.company = ?)) " +
+							" from journeys j " +
+							" where j.ctxId = cx.id " +
+							" and j.type = ? " +
+							" and j.company = ?)) " +
 					"and c.id not in  " +
 						"(select cd.candConId " +
-						"from candidates cd " +
-						"where userId = ? " +
-						"and userConId = ?)";
+						" from candidates cd " +
+						" where cd.userId = ? " +
+						" and cd.userConId = ?)";
 			jdbcTemplateObject.update(SQL1,userId,cId,userId,latest,
 									  earliest,type,company,userId,cId);
 		}

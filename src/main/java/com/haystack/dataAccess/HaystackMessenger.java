@@ -11,6 +11,8 @@ import com.haystack.entities.User;
 
 public class HaystackMessenger extends MessageJDBCTemplate {
 	
+	private final Integer SYSTEM_ID = 1;
+	
 	private static HaystackMessenger instance = null;
 	
 	private Message setUpSystemMessage(Integer toId) {
@@ -42,7 +44,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 	
 	public Boolean hasPermission(Integer userId, Integer permittedId) {
 		
-		if (permittedId == 1) {
+		if (permittedId == SYSTEM_ID) {
 			return true;
 		}
 		
@@ -103,8 +105,9 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 					 "AND m.threadId  = m2.threadId " +
 					 "INNER JOIN users u ON m.threadId - ? = u.id " +
 					 "WHERE (m.toUser = ? OR m.fromUser = ?) " +
-					 "AND u.id IN (1 OR (SELECT permittedId FROM messagepermissionsview " +
-					 "		   			 WHERE userId = ?)) " +
+					 "AND (u.id = " + SYSTEM_ID + " " +
+					 "OR u.id IN (SELECT permittedId FROM messagepermissionsview " +
+					 "		   	  WHERE userId = ?)) " +
 					 "ORDER BY m.date DESC";
 		List<MessageThread> results = jdbcTemplateObject.query(SQL, 
 								new Object[] {userId, userId, userId, userId, userId},

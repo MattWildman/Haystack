@@ -27,6 +27,11 @@ public class ViewMatchesController {
 				|| status.equalsIgnoreCase("accepted")
 				|| status.equalsIgnoreCase("rejected");
 	}
+	
+	@RequestMapping(value="/Matches", method=RequestMethod.GET)
+	public ModelAndView showMatchesIndexPage() {
+		return GeneralNavigation.renderPage("Your matches", "all-matches");
+	}
 
 	@RequestMapping(value = "/Matches/{URLstatus}", method = RequestMethod.GET)
 	public ModelAndView showMeetings(@PathVariable String URLstatus) {
