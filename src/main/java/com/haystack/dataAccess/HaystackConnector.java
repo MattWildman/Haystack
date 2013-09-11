@@ -41,9 +41,6 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 								   new Object[] {userConId, candConId});
 		
 		if (srs.first()) {
-		
-			this.updateStatus(userConId, "connected");
-			this.updateStatus(candConId, "connected");
 			
 			Meeting meeting1 = hdbf.buildMeeting(this.getById(userConId));
 			User user1 = userJDBCTemplate.getByConnectionId(userConId);
@@ -61,6 +58,18 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 
 		return false;
 		
+	}
+	
+	public Boolean isResolved(Integer connectionId) {
+		
+		String SQL = "SELECT status FROM connections " +
+				 	 "WHERE id = ? " +
+				 	 "AND status = 'resolved'";
+		
+		SqlRowSet srs = jdbcTemplateObject.queryForRowSet(SQL, 
+				   		new Object[] {connectionId});
+		
+		return srs.first();
 	}
 	
 	public List<Connection> getSharedConnections(Integer userId) {
@@ -150,16 +159,6 @@ public class HaystackConnector extends ConnectionJDBCTemplate {
 		}
 		
 		return connectionMappings;
-	}
-
-	public void blockContact(Integer userId, Integer blockedId) {
-		String SQL = "INSERT INTO blockings (userId, blockedId) VALUES (?, ?)";
-		jdbcTemplateObject.update(SQL, userId, blockedId);
-	}
-
-	public void unBlockContact(Integer userId, Integer permittedId) {
-		String SQL = "DELETE FROM blockings WHERE userId = ? AND blockedId = ?";
-		jdbcTemplateObject.update(SQL, userId, permittedId);
 	}
 	
 }

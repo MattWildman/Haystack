@@ -1,6 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <h1>${connection.title}</h1>
+
 <p>${connection.summary}</p>
+
+<p><a href="${originalURL}?action=reject">Reject this connection.</a></p>
+
 <h2>When they said you met</h2>
 <p>${connection.contexts[0].earliestString} 
 and ${connection.contexts[0].latestString}</p> 
@@ -33,5 +37,3 @@ and ${connection.contexts[0].latestString}</p>
 	<p>Aged between ${connection.participants[0].minAge} and ${connection.participants[0].maxAge}</p>
 	<p>Height: ${connection.participants[0].height}</p>
 	<p>Description: ${connection.participants[0].summary}</p>
-
-<p><a href="${originalURL}?action=reject">Reject this connection.</a></p>

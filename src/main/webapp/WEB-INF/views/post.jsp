@@ -1,6 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <h1>${meeting.title}</h1>
 <p>${meeting.summary}</p>
+<c:if test="${!hidden}">
+<p>You will receive match notifications for this search.<br>
+<a href="${originalURL}?action=hide">Hide from database?</a></p>
+</c:if>
+<c:if test="${hidden}">
+<p>You are not receiving match notifications for this search.<br>
+<a href="${originalURL}?action=activate">Activate search?</a></p>
+</c:if>
 <h2>When</h2>
 <p>${meeting.contexts[0].earliestString} 
 and ${meeting.contexts[0].latestString}</p> 

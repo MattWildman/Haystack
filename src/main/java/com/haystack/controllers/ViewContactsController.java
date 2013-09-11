@@ -65,7 +65,7 @@ public class ViewContactsController {
 			
 			if (request.getParameterMap().containsKey("action")) {
 				if (action.equals("block")) {
-					HaystackConnector.getInstance().blockContact(loggedInId, id);
+					HaystackMessenger.getInstance().blockContact(loggedInId, id);
 					ModelAndView blockedView = GeneralNavigation.renderPage(
 											   contact.getUsername() + " blocked", 
 							 				   "blocked-success");
@@ -73,7 +73,7 @@ public class ViewContactsController {
 					return blockedView;
 				}
 				if (action.equals("unblock")) {
-					HaystackConnector.getInstance().unBlockContact(loggedInId, id);
+					HaystackMessenger.getInstance().unBlockContact(loggedInId, id);
 					ModelAndView unblockedView = GeneralNavigation.renderPage(
 												 contact.getUsername() + " unblocked", 
 												 "unblocked-success");

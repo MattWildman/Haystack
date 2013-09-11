@@ -30,9 +30,7 @@ public class MessengerTest {
 	@Test
 	public void sendSystemMessages() throws InterruptedException {
 		HaystackMessenger.getInstance().sendMatchMessage(3, testMeeting);
-		Thread.sleep(2000);
 		HaystackMessenger.getInstance().sendSharedConnectionMessage(3, testMeeting, testUser);
-		Thread.sleep(2000);
 	}
 	
 	@Test

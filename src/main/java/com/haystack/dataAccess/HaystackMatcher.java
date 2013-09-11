@@ -16,37 +16,6 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 	
 	private HaystackDBFacade hdbf = new HaystackDBFacade();
 	
-	private void addCorrespondingCandidates(Integer userId, Integer userConId) {
-		
-		String SQL1 = "insert into candidates (userId, userConId, candConId) " +
-					  "values (?, ?, ?)";
-		
-		String SQL2 = "select * " +
-					  "from connections c " +
-					  "where c.id in " +
-					  "  (select cd.candConId " +
-					  "   from candidates cd " +
-					  "   where cd.userId = ? " +
-					  "   and cd.userConId = ?) " +
-					  "and c.id not in " +
-					  "  (select cd.userConId " +
-					  "   from candidates cd " +
-					  "   where cd.candConId = ?)";
-		
-		List<Connection> results = jdbcTemplateObject.query(SQL2, 
-								   new Object[] {userId, userConId, userConId}, 
-								   this.getRowMapper());
-		
-		for (Connection c : results) {
-			Integer toId = c.getUserId();
-			Integer toConId = c.getId();
-			jdbcTemplateObject.update(SQL1, toId, toConId, userConId);
-			HaystackMessenger.getInstance().sendMatchMessage(toId, 
-											hdbf.buildMeeting(c));
-		}
-		
-	}
-	
 	protected HaystackMatcher() {}
 	
 	public static HaystackMatcher getInstance() {
@@ -78,13 +47,14 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 	public List<Connection> getMatchedConnections(Integer userId, String status) {
 		
 		String SQL = "select * from connections c where c.id in " +
-	  		 			"(select distinct userConId from candidates cd " +
+	  		 			"(select distinct cd.userConId " +
+	  		 			 "from candidates cd " +
 	  		 			 "where cd.userId = ? " +
 	  		 			 "and cd.status = ? " +
 	  		 			 "and exists " +
 	  		 			 "	(select * " +
 	  		 			 "	 from candidates cd1 " +
-	  		 			 "	 where cd1.userConId = cd.userConId " +
+	  		 			 "	 where cd1.candConId = cd.userConId " +
 	  		 			 "	 and status <> 'rejected'))";
 		
 		List<Connection> results = jdbcTemplateObject.query(SQL, 
@@ -130,21 +100,29 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 		Integer tId = target.getId();
 		Integer cId = this.getByMeetingId(tId).getId();
 		Context context = target.getContexts().get(0);
-		Float lat = context.getLocation().getLat();
-		Float lon = context.getLocation().getLongd();
-		Integer rad = context.getLocation().getRad();
+		Boolean isJourney = context.getLocationType().equals("journey");
+		Float lat = isJourney ? context.getJourney().getStart().getLat():
+								context.getLocation().getLat();
+		Float lon = isJourney ? context.getJourney().getStart().getLongd():
+								context.getLocation().getLongd();
+		Integer rad = isJourney ? context.getJourney().getStart().getRad():
+								  context.getLocation().getRad();
 		Date earliest = context.getEarliest();
 		Date latest = context.getLatest();
 		Integer userId = hdbf.getUserId(tId);
-		Boolean isJourney = context.getLocationType().equals("journey");
-		//find matching contexts based on location
+		
+		//find matching contexts based on location or start of journey
 		String SQL = 
-				"insert into candidates (userId, userConId, candConId) " +
-				"select ?, ?, c.id " +
+				"select * " +
 				"from connections c " +
 				"where c.conType = 'meeting' " +
 				"and c.status <> 'resolved' " +
 				"and c.userId <> ? " +
+				"and c.id not in  " +
+				"	(select cd.candConId " +
+				" 	 from candidates cd " +
+				" 	 where cd.userId = ? " +
+				" 	 and cd.userConId = ?) " +
 				"and exists " +
 				   "(select * " +
 				    "from contexts cx " +
@@ -160,48 +138,39 @@ public class HaystackMatcher extends ConnectionJDBCTemplate {
 							"cos(radians(l.longd) - radians(?)) + " +
 							"sin(radians(?)) * sin(radians(l.lat)))) * 1000" +
 						"))";
-		jdbcTemplateObject.update(SQL,userId,cId,userId,latest,
-								  earliest,rad,lat,lon,lat);
-		if (isJourney) {
-			String type = context.getJourney().getType();
-			String company = context.getJourney().getCompany();
-			//find matching contexts based on journey
-			String SQL1 = 
-					"insert into candidates (userId, userConId, candConId) " +
-					"select ?, ?, c.id " +
-					"from connections c " +
-					"where c.conType = 'meeting' " +
-					"and c.status <> 'resolved' " +
-					"and c.userId <> ? " +
-					"and exists " +
-						"(select * " +
-						" from contexts cx " +
-						" where cx.earliest < ? " +
-						" and cx.latest > ? " +
-						" and cx.conId = c.id " +
-						" and exists " +
-							"(select * " +
-							" from journeys j " +
-							" where j.ctxId = cx.id " +
-							" and j.type = ? " +
-							" and j.company = ?)) " +
-					"and c.id not in  " +
-						"(select cd.candConId " +
-						" from candidates cd " +
-						" where cd.userId = ? " +
-						" and cd.userConId = ?)";
-			jdbcTemplateObject.update(SQL1,userId,cId,userId,latest,
-									  earliest,type,company,userId,cId);
-		}
 		
-		List<Connection> results = this.getConnectionMatches(cId, "pending");
+		List<Connection> results = jdbcTemplateObject.query(SQL, new Object[] 
+		{userId,userId,cId,latest,earliest,rad,lat,lon,lat}, this.getRowMapper());
+		
+		if (isJourney) {
+			//find matching contexts based on end of journey
+			lat = context.getJourney().getEnd().getLat();
+			lon = context.getJourney().getEnd().getLongd();
+			rad = context.getJourney().getEnd().getRad();
+			
+			List<Connection> tempResults = jdbcTemplateObject.query(SQL, new Object[] 
+			{userId,userId,cId,latest,earliest,rad,lat,lon,lat}, this.getRowMapper());
+			
+			results.addAll(tempResults);
+		}
 		
 		if (results.isEmpty()) {
 			throw new EmptyResultDataAccessException(tId);
 		}
 		
 		//else
-		this.addCorrespondingCandidates(userId, cId);
+		//add matching pairs to candidates table
+		for(Connection c : results) {
+			String SQL1 = "insert into candidates (userId, userConId, candConId) " +
+					  	  "values (?, ?, ?)";
+			Integer otherUserId = c.getUserId();
+			Integer otherConId = c.getId();
+			jdbcTemplateObject.update(SQL1, userId, cId, otherConId);
+			jdbcTemplateObject.update(SQL1, otherUserId, otherConId, cId);
+			HaystackMessenger.getInstance().sendMatchMessage(otherUserId, 
+											hdbf.buildMeeting(c));
+		}
+
 		HaystackMessenger.getInstance().sendMatchMessage(userId, target);
 		List<Meeting> candidates = hdbf.connectionsToMeetings(results);
 		return candidates;

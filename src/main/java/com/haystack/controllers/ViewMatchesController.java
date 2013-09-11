@@ -136,7 +136,6 @@ public class ViewMatchesController {
 						+ mId.toString();
 				rejectedView.addObject("originalURL", originalURL);
 				return rejectedView;
-
 			}
 		}
 

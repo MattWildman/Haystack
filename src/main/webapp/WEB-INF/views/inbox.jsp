@@ -6,7 +6,7 @@
 		<c:forEach items="${messageThreads}" var="messageThread">
 			<a href="<c:url value="/Inbox/" />${messageThread.user.id}">
 			<li>
-			<h2>${messageThread.user.username} (${messageThread.unreadCount} unread)</h2>
+			<h2>${messageThread.user.username} <c:if test="${messageThread.unreadCount > 0}">(${messageThread.unreadCount})</c:if></h2>
 			<h3><fm:formatDate value="${messageThread.lastMessage.date}" pattern="E dd/MM/yyyy 'at' HH:mm:ss" />
 			 - ${messageThread.lastMessage.title}</h3>
 			</li>

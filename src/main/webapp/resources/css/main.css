@@ -6,10 +6,11 @@
 }
 
 body {
-	background-color: #f2f2f2;
+	background-color: #000052;
 }
 
-a {
+a, a:visited {
+	color: #0000FF;
 	text-decoration: none;
 }
 
@@ -31,19 +32,25 @@ a:hover {
 		padding: 0;
 	}
 	
-	.main-nav li a {
+	.main-nav li a,
+	.main-nav li a:visited {
 		display: block;
 		width: 110px;
 		margin: 3px;
 		padding: 10px 0;
-		background: #F2F2F2;
+		background: #000052;
+		color: #ffffff;
 	}
 
 .content, .main-nav {
 	max-width: 700px;
 	margin: 0 auto;
-	background-color: #fff;
+	background-color: #E6E6FF;
 	padding: 15px;
+}
+.error {
+	font-weight: bold;
+	color: #ff0000;
 }
 
 #actions {

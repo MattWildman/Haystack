@@ -18,7 +18,7 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 	private Message setUpSystemMessage(Integer toId) {
 		Message message = new Message();
 		message.setToUser(toId);
-		message.setFromUser(1);
+		message.setFromUser(SYSTEM_ID);
 		return message;
 	}
 	
@@ -35,11 +35,10 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		
 		String SQL = "UPDATE messages " +
 				 	 "SET isRead = 1 " +
-					 "WHERE isRead = 0 " +
-					 "AND threadId - ? = ? " +
-					 "AND toUser = ?";
+					 "WHERE toUser = ? " +
+					 "AND threadId = ? + ?";
 		
-		jdbcTemplateObject.update(SQL, otherUserId, userId, userId);
+		jdbcTemplateObject.update(SQL, userId, otherUserId, userId);
 	}
 	
 	public Boolean hasPermission(Integer userId, Integer permittedId) {
@@ -58,6 +57,16 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		return srs.first();
 	}
 	
+	public void blockContact(Integer userId, Integer blockedId) {
+		String SQL = "INSERT INTO blockings (userId, blockedId) VALUES (?, ?)";
+		jdbcTemplateObject.update(SQL, userId, blockedId);
+	}
+
+	public void unBlockContact(Integer userId, Integer permittedId) {
+		String SQL = "DELETE FROM blockings WHERE userId = ? AND blockedId = ?";
+		jdbcTemplateObject.update(SQL, userId, permittedId);
+	}
+	
 	public void sendUserMessage(Message message) {
 		if (this.hasPermission(message.getFromUser(), message.getToUser())) {
 			message.setMessageType("user message");
@@ -69,8 +78,10 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		Message message = this.setUpSystemMessage(toId);
 		String meetingName = meeting.getTitle();
 		Integer meetingId = meeting.getId();
+		
 		String body = "We've found some matches for your meeting: " + meetingName + "<br>" +
 					  "<a href=\"../Matches/Pending/" + meetingId + "\">View them now.</a>";
+		
 		message.setTitle("New matches found");
 		message.setSummary(body);
 		message.setMessageType("new matches");
@@ -82,10 +93,12 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 		String meetingName = meeting.getTitle();
 		String username = user.getUsername();
 		Integer userId = user.getId();
+		
 		String body = "User '" + username + "' has accepted your meeting - '" + 
 					  meetingName + "' - as a match.<br>" +
 					  "You can start messaging them! " +
 					  "<a href=\"../Inbox/" + userId + "\">Send them a message.</a>";
+		
 		message.setTitle("New shared connection!");
 		message.setSummary(body);
 		message.setMessageType("shared connection");
@@ -93,22 +106,25 @@ public class HaystackMessenger extends MessageJDBCTemplate {
 	}
 	
 	public List<MessageThread> getMessageThreads(Integer userId) {
+		
 		String SQL = "SELECT m.id, m.date, u.id, msgCount, unreadCount " +
 					 "FROM messages m " +
 					 "INNER JOIN " +
 					 "    (SELECT threadId,  " +
-					 "     MAX(date) AS newestDate,  " +
+					 "     MAX(id) AS newest,  " +
 				 	 "     COUNT(*) AS msgCount, " +
 					 "     COUNT(CASE WHEN isRead = 0 AND toUser = ? THEN 1 END) AS unreadCount " +
 					 "     FROM messages  " +
-					 "     GROUP BY threadId) m2 ON m.date = m2.newestDate " +
-					 "AND m.threadId  = m2.threadId " +
+					 "     GROUP BY threadId) m2 ON m.id = m2.newest " +
+					 "								AND m.threadId  = m2.threadId " +
 					 "INNER JOIN users u ON m.threadId - ? = u.id " +
 					 "WHERE (m.toUser = ? OR m.fromUser = ?) " +
 					 "AND (u.id = " + SYSTEM_ID + " " +
-					 "OR u.id IN (SELECT permittedId FROM messagepermissionsview " +
+					 "OR u.id IN (SELECT permittedId " +
+					 "			  FROM messagepermissionsview " +
 					 "		   	  WHERE userId = ?)) " +
 					 "ORDER BY m.date DESC";
+		
 		List<MessageThread> results = jdbcTemplateObject.query(SQL, 
 								new Object[] {userId, userId, userId, userId, userId},
 								new MessageThreadMapper());

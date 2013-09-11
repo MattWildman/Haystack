@@ -80,10 +80,12 @@ public class ViewConnectionsController {
 									   HttpServletRequest request) {
 		Meeting connection = null;
 		Integer ownerId = 0;
+		Integer userConId = 0;
 		String connectionTitle = "";
 		try {
 			ownerId = hdbf.getUserId(cId);
-
+			userConId = hdbf.getConnectionId(cId);
+			
 			// security test
 			Integer loggedInId = SecurityNavigation.getLoggedInUserId();
 			if (ownerId != loggedInId) {
@@ -108,6 +110,8 @@ public class ViewConnectionsController {
 			if (action.equals("reject")) {
 
 				HaystackMatcher.getInstance().updateCandidateStatus("rejected", cId, id);
+				HaystackConnector.getInstance().updateStatus(userConId, "unresolved");
+				
 				ModelAndView rejectedView = GeneralNavigation.renderPage(
 											"You have rejected '" + connectionTitle + "'",
 											"match-rejected");
